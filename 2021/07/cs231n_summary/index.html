@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="robots" content="noodp" />
+    <title>CS231n学习总结 - Tianxin&#39;s Blog</title><meta name="Description" content="Tianxin&#39;s Blog, computer vision, deeplearning, pytorch, programming"><meta property="og:title" content="CS231n学习总结" />
+<meta property="og:description" content="断断续续花了大约五周的时间学完了 CS231n，是时候总结一下自己遇到的问题和收获了。" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://imxtx.github.io/2021/07/cs231n_summary/" /><meta property="og:image" content="https://imxtx.github.io/logo.png"/><meta property="article:section" content="posts" />
+<meta property="article:published_time" content="2021-07-15T00:00:00+00:00" />
+<meta property="article:modified_time" content="2021-07-15T00:00:00+00:00" /><meta property="og:site_name" content="Tianxin&#39;s Blog" />
+<meta name="twitter:card" content="summary_large_image"/>
+<meta name="twitter:image" content="https://imxtx.github.io/logo.png"/>
+
+<meta name="twitter:title" content="CS231n学习总结"/>
+<meta name="twitter:description" content="断断续续花了大约五周的时间学完了 CS231n，是时候总结一下自己遇到的问题和收获了。"/>
+<meta name="application-name" content="Tianxin&#39;s Blog">
+<meta name="apple-mobile-web-app-title" content="Tianxin&#39;s Blog">
+
+<meta name="theme-color" content="#f8f8f8"><meta name="msapplication-TileColor" content="#da532c"><link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
+        <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+        <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><link rel="canonical" href="https://imxtx.github.io/2021/07/cs231n_summary/" /><link rel="stylesheet" href="/lib/normalize/normalize.min.css"><link rel="stylesheet" href="/css/color.css"><link rel="stylesheet" href="/css/style.min.css"><link rel="preload" as="style" onload="this.onload=null;this.rel='stylesheet'" href="/lib/fontawesome-free/all.min.css">
+        <noscript><link rel="stylesheet" href="/lib/fontawesome-free/all.min.css"></noscript><link rel="preload" as="style" onload="this.onload=null;this.rel='stylesheet'" href="/lib/animate/animate.min.css">
+        <noscript><link rel="stylesheet" href="/lib/animate/animate.min.css"></noscript><script type="application/ld+json">
+    {
+        "@context": "http://schema.org",
+        "@type": "BlogPosting",
+        "headline": "CS231n学习总结",
+        "inLanguage": "en",
+        "mainEntityOfPage": {
+            "@type": "WebPage",
+            "@id": "https:\/\/imxtx.github.io\/2021\/07\/cs231n_summary\/"
+        },"genre": "posts","keywords": "course, notes","wordcount":  2623 ,
+        "url": "https:\/\/imxtx.github.io\/2021\/07\/cs231n_summary\/","datePublished": "2021-07-15T00:00:00+00:00","dateModified": "2021-07-15T00:00:00+00:00","publisher": {
+            "@type": "Organization",
+            "name": ""},"author": {
+                "@type": "Person",
+                "name": "tianxin"
+            },"description": ""
+    }
+    </script><script src="//instant.page/5.1.1" defer type="module" integrity="sha384-MWfCL6g1OTGsbSwfuMHc8+8J2u71/LA8dzlIN3ycajckxuZZmF+DNjdm7O6H3PSq"></script>
+</head>
+
+<body header-desktop="fixed" header-mobile="auto"><script type="text/javascript">
+        function setTheme(theme) {document.body.setAttribute('theme', theme); document.documentElement.style.setProperty('color-scheme', theme === 'light' ? 'light' : 'dark');}
+        function saveTheme(theme) {window.localStorage && localStorage.setItem('theme', theme);}
+        function getMeta(metaName) {const metas = document.getElementsByTagName('meta'); for (let i = 0; i < metas.length; i++) if (metas[i].getAttribute('name') === metaName) return metas[i]; return '';}
+        if (window.localStorage && localStorage.getItem('theme')) {let theme = localStorage.getItem('theme');theme === 'light' || theme === 'dark' || theme === 'black' ? setTheme(theme) : (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? setTheme('dark') : setTheme('light')); } else { if ('auto' === 'light' || 'auto' === 'dark' || 'auto' === 'black') setTheme('auto'), saveTheme('auto'); else saveTheme('auto'), window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? setTheme('dark') : setTheme('light');}
+        let metaColors = {'light': '#f8f8f8','dark': '#252627','black': '#000000'}
+        getMeta('theme-color').content = metaColors[document.body.getAttribute('theme')];
+    </script>
+    <div id="back-to-top"></div>
+    <div id="mask"></div><div class="wrapper"><header class="desktop" id="header-desktop">
+    <div class="header-wrapper">
+        <div class="header-title">
+            <a href="/" title="Tianxin&#39;s Blog">Tianxin&#39;s Blog</a>
+        </div>
+        <div class="menu">
+            <div class="menu-inner"><a class="menu-item" href="/posts/"> Posts </a><a class="menu-item" href="/tags/"> Tags </a><a class="menu-item" href="/categories/"> Categories </a><a class="menu-item" href="/about/"> About </a><span class="menu-item delimiter"></span><span class="menu-item search" id="search-desktop">
+                        <input type="text" placeholder="Search titles or contents..." id="search-input-desktop">
+                        <a href="#" class="search-button search-toggle" id="search-toggle-desktop" title="Search">
+                            <i class="fas fa-search fa-fw"></i>
+                        </a>
+                        <a href="#" class="search-button search-clear" id="search-clear-desktop" title="Clear">
+                            <i class="fas fa-times-circle fa-fw"></i>
+                        </a>
+                        <span class="search-button search-loading" id="search-loading-desktop">
+                            <i class="fas fa-spinner fa-fw fa-spin"></i>
+                        </span>
+                    </span><a href="#" class="menu-item theme-switch" title="Switch Theme">
+                    <i class="fas fa-adjust fa-fw"></i>
+                </a></div>
+        </div>
+    </div>
+</header><header class="mobile" id="header-mobile">
+    <div class="header-container">
+        <div class="header-wrapper">
+            <div class="header-title">
+                <a href="/" title="Tianxin&#39;s Blog">Tianxin&#39;s Blog</a>
+            </div>
+            <div class="menu-toggle" id="menu-toggle-mobile">
+                <span></span><span></span><span></span>
+            </div>
+        </div>
+        <div class="menu" id="menu-mobile"><div class="search-wrapper">
+                    <div class="search mobile" id="search-mobile">
+                        <input type="text" placeholder="Search titles or contents..." id="search-input-mobile">
+                        <a href="#" class="search-button search-toggle" id="search-toggle-mobile" title="Search">
+                            <i class="fas fa-search fa-fw"></i>
+                        </a>
+                        <a href="#" class="search-button search-clear" id="search-clear-mobile" title="Clear">
+                            <i class="fas fa-times-circle fa-fw"></i>
+                        </a>
+                        <span class="search-button search-loading" id="search-loading-mobile">
+                            <i class="fas fa-spinner fa-fw fa-spin"></i>
+                        </span>
+                    </div>
+                    <a href="#" class="search-cancel" id="search-cancel-mobile">
+                        Cancel
+                    </a>
+                </div><a class="menu-item" href="/posts/" title="">Posts</a><a class="menu-item" href="/tags/" title="">Tags</a><a class="menu-item" href="/categories/" title="">Categories</a><a class="menu-item" href="/about/" title="">About</a><a href="#" class="menu-item theme-switch" title="Switch Theme">
+                <i class="fas fa-adjust fa-fw"></i>
+            </a></div>
+    </div>
+</header>
+<div class="search-dropdown desktop">
+    <div id="search-dropdown-desktop"></div>
+</div>
+<div class="search-dropdown mobile">
+    <div id="search-dropdown-mobile"></div>
+</div>
+<main class="main">
+            <div class="container"><div class="toc" id="toc-auto">
+        <h2 class="toc-title">Contents</h2>
+        <div class="toc-content" id="toc-content-auto"><nav id="TableOfContents">
+  <ul>
+    <li><a href="#课程信息">课程信息</a></li>
+    <li><a href="#lecture-14">Lecture 1~4</a></li>
+    <li><a href="#lecture-59">Lecture 5~9</a></li>
+    <li><a href="#lecture-1015">Lecture 10~15</a></li>
+    <li><a href="#lecture-1619">Lecture 16~19</a></li>
+    <li><a href="#作业难点">作业难点</a>
+      <ul>
+        <li><a href="#assignment-1">Assignment 1</a></li>
+        <li><a href="#assignment-2">Assignment 2</a></li>
+        <li><a href="#assignment-3">Assignment 3</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav></div>
+    </div><script>document.getElementsByTagName("main")[0].setAttribute("pageStyle", "normal")</script><script>document.getElementsByTagName("main")[0].setAttribute("autoTOC", "true")</script><article class="page single"><h1 class="single-title animate__animated animate__flipInX">CS231n学习总结</h1><div class="post-meta">
+            <div class="post-meta-line">
+                <span class="post-author"><i class="author fas fa-user-circle fa-fw"></i><a href="/about" title="Author" rel=" author" class="author">tianxin</a>
+                </span>&nbsp;<span class="post-category">included in </span>&nbsp;<span class="post-category">category <a href="/categories/deep-learning/"><i class="far fa-folder fa-fw"></i>Deep Learning</a></span></div>
+            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2021-07-15">2021-07-15</time>&nbsp;<i class="far fa-edit fa-fw"></i>&nbsp;<time datetime="2021-07-15">2021-07-15</time>&nbsp;<i class="fas fa-pencil-alt fa-fw"></i>&nbsp;2623 words&nbsp;
+                <i class="far fa-clock fa-fw"></i>&nbsp;6 minutes&nbsp;</div>
+        </div><div class="details toc" id="toc-static"  kept="">
+                <div class="details-summary toc-title">
+                    <span>Contents</span>
+                    <span><i class="details-icon fas fa-angle-right"></i></span>
+                </div>
+                <div class="details-content toc-content" id="toc-content-static"><nav id="TableOfContents">
+  <ul>
+    <li><a href="#课程信息">课程信息</a></li>
+    <li><a href="#lecture-14">Lecture 1~4</a></li>
+    <li><a href="#lecture-59">Lecture 5~9</a></li>
+    <li><a href="#lecture-1015">Lecture 10~15</a></li>
+    <li><a href="#lecture-1619">Lecture 16~19</a></li>
+    <li><a href="#作业难点">作业难点</a>
+      <ul>
+        <li><a href="#assignment-1">Assignment 1</a></li>
+        <li><a href="#assignment-2">Assignment 2</a></li>
+        <li><a href="#assignment-3">Assignment 3</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav></div>
+            </div><div class="content" id="content"><p>断断续续花了大约五周的时间学完了 CS231n，是时候总结一下自己遇到的问题和收获了。</p>
+<h2 id="课程信息" class="headerLink">
+    <a href="#%e8%af%be%e7%a8%8b%e4%bf%a1%e6%81%af" class="header-mark"></a>课程信息</h2><p>课程主页：<a href="http://cs231n.stanford.edu/index.html" target="_blank" rel="noopener noreferrer">Stanford University CS231n: Convolutional Neural Networks for Visual Recognition</a></p>
+<p>CS231n 视频(2017年)：<a href="https://www.bilibili.com/video/BV1nJ411z7fe?share_source=copy_web" target="_blank" rel="noopener noreferrer">https://www.bilibili.com/video/BV1nJ411z7fe?share_source=copy_web</a></p>
+<p>推荐结合 <a href="https://web.eecs.umich.edu/~justincj/" target="_blank" rel="noopener noreferrer">Justin Johnson (umich.edu)</a> 的 <a href="https://web.eecs.umich.edu/~justincj/teaching/eecs498/FA2020/schedule.html" target="_blank" rel="noopener noreferrer">EECS 498-007 / 598-005: Deep Learning for Computer Vision (umich.edu)</a> 学习。（CS231n 的讲师 Justin Johnson 从斯坦福毕业之后去了密歇根州立大学任教，教学内容、PPT、实验作业等都和 CS231n 差不多，公开<a href="https://www.bilibili.com/video/BV1Yp4y1q7ms?from=search&amp;seid=10520157556341037278" target="_blank" rel="noopener noreferrer">视频</a>是2019年的）</p>
+<p>我是按照 2021 年 <a href="http://cs231n.stanford.edu/index.html" target="_blank" rel="noopener noreferrer">CS231n</a> 的 <a href="http://cs231n.stanford.edu/schedule.html" target="_blank" rel="noopener noreferrer">Schedule</a> 来学习的。虽然 CS231n 的课程内容以 lecture 划分，但是经过学习之后，我认为可以分为四大部分：</p>
+<ul>
+<li>Lecture 1~4：主要介绍分类问题、线性分类器、损失函数、优化方法、(全连接)神经网络、反向传播算法，这些属于深度学习基础中的基础，也是<strong>作业1</strong>的主要内容；</li>
+<li>Lecture 5~9：主要介绍卷积神经网络(CNN)、深度学习中的硬件和软件、网络的训练和优化方法、比较著名的网络架构，这部分属于计算机视觉的必备知识，是<strong>作业2</strong>的主要内容；</li>
+<li>Lecture 10~15：主要介绍循环神经网络(RNN)、LSTM、Attention机制、Transformer等，还有生成模型、自监督学习、网络可视化和理解、检测和分割，是<strong>作业3</strong>的主要内容；</li>
+<li>Lecture 16~19：这部分是嘉宾Lecture，没有视频，只有slides。</li>
+</ul>
+<p>另外 <a href="https://web.eecs.umich.edu/~justincj/teaching/eecs498/FA2020/schedule.html" target="_blank" rel="noopener noreferrer">EECS 498-007 / 598-005: Deep Learning for Computer Vision (umich.edu)</a> 还包括了3D视觉、视频分类、强化学习，生成模型部分也比CS231n更加详细。下面对各个部分的大致内容和阅读观看过的参考资料和视频做一个梳理，方便用到的时候再回顾。</p>
+<h2 id="lecture-14" class="headerLink">
+    <a href="#lecture-14" class="header-mark"></a>Lecture 1~4</h2><p>Lecture 1和2从图像分类着手，介绍了图像分类问题的难点和流程(pipeline)，并使用介绍了**最近领(Nearest Neighbor)<strong>算法，然后要求在作业中实现效果更好的</strong>KNN(K Nearest Neighbor)**算法。</p>
+<blockquote>
+<p>阅读材料：<a href="https://cs231n.github.io/classification/" target="_blank" rel="noopener noreferrer">https://cs231n.github.io/classification/</a></p>
+</blockquote>
+<p>Lecture 3以<strong>CIFAR10</strong>数据集为例，介绍了线性多分类器、Loss函数、多分类<strong>SVM</strong>、<strong>Softmax</strong>，最后对SVM和Softmax进行了对比。</p>
+<blockquote>
+<p>阅读材料：<a href="https://cs231n.github.io/linear-classify/" target="_blank" rel="noopener noreferrer">https://cs231n.github.io/linear-classify/</a></p>
+</blockquote>
+<p>接着对求解最优参数的方法进行介绍，包括梯度下降、gradient check技巧、防止数值不稳定(除零或者数值过大)的技巧等。</p>
+<blockquote>
+<p>阅读材料：<a href="https://cs231n.github.io/optimization-1/" target="_blank" rel="noopener noreferrer">https://cs231n.github.io/optimization-1/</a></p>
+</blockquote>
+<p>Lecture 4讲解了神经网络、反向传播，手推反向传播很重要的一个工具就是计算图。</p>
+<blockquote>
+<p>阅读材料：<a href="https://cs231n.github.io/optimization-2/" target="_blank" rel="noopener noreferrer">https://cs231n.github.io/optimization-2/</a></p>
+</blockquote>
+<h2 id="lecture-59" class="headerLink">
+    <a href="#lecture-59" class="header-mark"></a>Lecture 5~9</h2><p>这部分主要围绕CNN展开，Lecture 5讲解了CNN基本知识：卷积、通道、核、池化(Pooling)等。</p>
+<blockquote>
+<p>阅读材料：<a href="https://cs231n.github.io/convolutional-networks/" target="_blank" rel="noopener noreferrer">https://cs231n.github.io/convolutional-networks/</a></p>
+</blockquote>
+<p>Lecture 6主要介绍机器学习中的硬件(CPU, GPU, TPU)和软件(TensorFlow, PyTorch, Keras等)。</p>
+<p>Lecture 7和8主要讲解模型训练中的优化方法，如<strong>Batch Normalization</strong>等。这个部分我总结一个笔记：<a href="https://xietx1995.github.io/2021/optimization" target="_blank" rel="noopener noreferrer">https://xietx1995.github.io/2021/optimization</a>。</p>
+<p>Lecture 9主要介绍主流的网络架构：<a href="https://papers.nips.cc/paper/4824-imagenet-classification-with-deep-convolutional-neural-networks.pdf" target="_blank" rel="noopener noreferrer">AlexNet</a>, <a href="https://arxiv.org/abs/1409.1556" target="_blank" rel="noopener noreferrer">VGGNet</a>, <a href="https://arxiv.org/abs/1409.4842" target="_blank" rel="noopener noreferrer">GoogLeNet</a>, <a href="https://arxiv.org/abs/1512.03385" target="_blank" rel="noopener noreferrer">ResNet</a></p>
+<h2 id="lecture-1015" class="headerLink">
+    <a href="#lecture-1015" class="header-mark"></a>Lecture 10~15</h2><p>Lecture 10和11主要讲解RNN、Attention、Transformer。</p>
+<blockquote>
+<p>RNN阅读材料：<a href="https://www.deeplearningbook.org/contents/rnn.html" target="_blank" rel="noopener noreferrer">https://www.deeplearningbook.org/contents/rnn.html</a></p>
+</blockquote>
+<p>另外还有以下资料也很不错：</p>
+<ul>
+<li><a href="https://medium.com/swlh/a-simple-overview-of-rnn-lstm-and-attention-mechanism-9e844763d07b" target="_blank" rel="noopener noreferrer">A simple overview of RNN, LSTM and Attention Mechanism</a></li>
+<li><a href="https://towardsdatascience.com/illustrated-guide-to-lstms-and-gru-s-a-step-by-step-explanation-44e9eb85bf21" target="_blank" rel="noopener noreferrer">Illustrated Guide to LSTM’s and GRU’s: A step by step explanation</a></li>
+<li>Attention原始论文：<a href="https://arxiv.org/abs/1409.0473" target="_blank" rel="noopener noreferrer">https://arxiv.org/abs/1409.0473</a></li>
+<li>Self-Attention原始论文：<a href="https://arxiv.org/abs/1601.06733" target="_blank" rel="noopener noreferrer">https://arxiv.org/abs/1601.06733</a></li>
+<li><a href="https://lilianweng.github.io/lil-log/2018/06/24/attention-attention.html" target="_blank" rel="noopener noreferrer">Attention? Attention! (lilianweng.github.io)</a></li>
+<li>Attention视频讲解：<a href="https://youtu.be/XhWdv7ghmQQ" target="_blank" rel="noopener noreferrer">https://youtu.be/XhWdv7ghmQQ</a></li>
+<li>Selft-Attention视频讲解：<a href="https://youtu.be/Vr4UNt7X6Gw" target="_blank" rel="noopener noreferrer">https://youtu.be/Vr4UNt7X6Gw</a></li>
+<li>Transformer原始论文：<a href="https://arxiv.org/abs/1706.03762" target="_blank" rel="noopener noreferrer">https://arxiv.org/abs/1706.03762</a></li>
+<li>Transformer视频讲解：<a href="https://youtu.be/aButdUV0dxI" target="_blank" rel="noopener noreferrer">https://youtu.be/aButdUV0dxI</a></li>
+<li><a href="http://jalammar.github.io/illustrated-transformer/" target="_blank" rel="noopener noreferrer">The Illustrated Transformer – Jay Alammar</a></li>
+<li><a href="http://peterbloem.nl/blog/transformers" target="_blank" rel="noopener noreferrer">Transformers from scratch</a></li>
+</ul>
+<p>Lecture 12和13分别是生成模型、自监督学习，李宏毅的视频讲得很好：</p>
+<ul>
+<li>生成式对抗网络：<a href="https://youtu.be/4OWp0wDu6Xw" target="_blank" rel="noopener noreferrer">https://youtu.be/4OWp0wDu6Xw</a></li>
+<li>自监督学习：<a href="https://youtu.be/e422eloJ0W4" target="_blank" rel="noopener noreferrer">https://youtu.be/e422eloJ0W4</a></li>
+</ul>
+<p>其他不错的资料：</p>
+<ul>
+<li><a href="https://machinelearningmastery.com/what-are-generative-adversarial-networks-gans/" target="_blank" rel="noopener noreferrer">A Gentle Introduction to Generative Adversarial Networks (GANs)</a></li>
+<li><a href="https://lilianweng.github.io/lil-log/2019/11/10/self-supervised-learning.html" target="_blank" rel="noopener noreferrer">Self-Supervised Representation Learning (Lilian Weng Blog Post)</a></li>
+</ul>
+<p>Lecture 14主要讲特征可视化，如Saliency Maps等，Lecture 15主要讲目标检测、图像分割等。</p>
+<h2 id="lecture-1619" class="headerLink">
+    <a href="#lecture-1619" class="header-mark"></a>Lecture 16~19</h2><p>这部分是嘉宾Lecture，无视频，部分无Slides。</p>
+<h2 id="作业难点" class="headerLink">
+    <a href="#%e4%bd%9c%e4%b8%9a%e9%9a%be%e7%82%b9" class="header-mark"></a>作业难点</h2><p>CS231n的作业比较硬核，大部分必须手写梯度计算和反向传播，其中还有很多技巧和细节。通过这种折磨之后，结合阅读框架部分源码，自己也大概了解了框架内部具体是怎么做的。下面总结一下作业中的难点。</p>
+<h3 id="assignment-1" class="headerLink">
+    <a href="#assignment-1" class="header-mark"></a>Assignment 1</h3><p>个人认为作业1中比较难的有三个，主要是需要手动计算梯度：</p>
+<ul>
+<li>Q2: Training a Support Vector Machine</li>
+<li>Q3: Implement a Softmax classifier</li>
+<li>Q4: Two-Layer Neural Network</li>
+</ul>
+<p>Q2和Q3需要推导梯度计算公式，向量化版本需要思考。关于Softmax的梯度计算，我总结了一篇文章：<a href="https://xietx1995.github.io/2021/softmax" target="_blank" rel="noopener noreferrer">https://xietx1995.github.io/2021/softmax</a></p>
+<p>全连接的反向传播就是矩阵求导，和上游梯度相乘即可。</p>
+<h3 id="assignment-2" class="headerLink">
+    <a href="#assignment-2" class="header-mark"></a>Assignment 2</h3><p>作业2中比较难的是Batch Normalization和CNN的反向传播：</p>
+<ul>
+<li>Q2: Batch Normalization</li>
+<li>Q4: Convolutional Neural Networks</li>
+</ul>
+<p>以Batch Normalization为例，只要推出的梯度计算公式，写代码就清晰明了：</p>
+<p><a class="lightgallery" href="/2021/07/cs231n_summary/bn_computation_graph.jpg" title="bn_computation_graph" data-thumbnail="/2021/07/cs231n_summary/bn_computation_graph.jpg">
+        <img
+            
+            loading="lazy"
+            src="bn_computation_graph.jpg"
+            srcset="/2021/07/cs231n_summary/bn_computation_graph.jpg, bn_computation_graph.jpg 1.5x, /2021/07/cs231n_summary/bn_computation_graph.jpg 2x"
+            sizes="auto"
+            alt="/2021/07/cs231n_summary/bn_computation_graph.jpg">
+    </a></p>
+<p>CNN的反向传播需要一点想象力。推荐阅读文章：<a href="https://medium.com/@pavisj/convolutions-and-backpropagations-46026a8f5d2c" target="_blank" rel="noopener noreferrer">Convolutions and Backpropagations</a></p>
+<h3 id="assignment-3" class="headerLink">
+    <a href="#assignment-3" class="header-mark"></a>Assignment 3</h3><p>作业3中比较难的是RNN和Transformer的梯度计算：</p>
+<ul>
+<li>Q1: Image Captioning with Vanilla RNNs</li>
+<li>Q2: Image Captioning with Transformers</li>
+</ul>
+<p>RNN中比较难的是梯度在时间步之间的积累，Transformer中比较难的是理解Q、K、V矩阵的反向传播。</p>
+<p>总之，利用计算图，就可以很方便地推导出梯度计算公式，写出代码就比较顺理成章了，但是如果要写出向量化的代码还是比较难的，这需要对numpy、矩阵计算有更进一步的掌握才行。</p>
+<hr>
+<p>总之，CS231n还只是起步，想要研究各个细分的方向需要更进一步的学习才能进步。</p></div>
+
+        <div class="post-footer" id="post-footer">
+    <div class="post-info">
+        <div class="post-info-line">
+            <div class="post-info-mod">
+                <span>Updated on 2021-07-15</span>
+            </div>
+            <div class="post-info-license"></div>
+        </div>
+        <div class="post-info-line">
+            <div class="post-info-md"><span><a class="link-to-mardown" href=/2021/07/cs231n_summary/index.md target="_blank" rel="noopener noreferrer">Read markdown</a>
+                    </span></div>
+            <div class="post-info-share">
+                <span><a href="#" title="Share on Twitter" data-sharer="twitter" data-url="https://imxtx.github.io/2021/07/cs231n_summary/" data-title="CS231n学习总结" data-via="@imxietx" data-hashtags="course,notes"><i class="fab fa-twitter fa-fw"></i></a><a href="#" title="Share on Facebook" data-sharer="facebook" data-url="https://imxtx.github.io/2021/07/cs231n_summary/" data-hashtag="course"><i class="fab fa-facebook-square fa-fw"></i></a><a href="#" title="Share on Hacker News" data-sharer="hackernews" data-url="https://imxtx.github.io/2021/07/cs231n_summary/" data-title="CS231n学习总结"><i class="fab fa-hacker-news fa-fw"></i></a><a href="#" title="Share on Line" data-sharer="line" data-url="https://imxtx.github.io/2021/07/cs231n_summary/" data-title="CS231n学习总结"><i data-svg-src="/lib/simple-icons/icons/line.min.svg"></i></a><a href="#" title="Share on 微博" data-sharer="weibo" data-url="https://imxtx.github.io/2021/07/cs231n_summary/" data-title="CS231n学习总结"><i class="fab fa-weibo fa-fw"></i></a></span>
+            </div>
+        </div>
+    </div>
+
+    <div class="post-info-more">
+        <section class="post-tags"><i class="fas fa-tags fa-fw"></i>&nbsp;<a href="/tags/course/">course</a>,&nbsp;<a href="/tags/notes/">notes</a></section>
+        <section>
+            <span><a href="javascript:void(0);" onclick="window.history.back();">Back</a></span>&nbsp;|&nbsp;<span><a href="/">Home</a></span>
+        </section>
+    </div>
+
+    <div class="post-nav"></div>
+</div>
+</article></div>
+        </main><footer class="footer">
+        <div class="footer-container"><div class="footer-line">
+                    Powered by <a href="https://gohugo.io/" target="_blank" rel="noopener noreferrer" title="Hugo 0.111.3">Hugo</a>&nbsp;|&nbsp;Theme - <a href="https://github.com/HEIGE-PCloud/DoIt" target="_blank" rel="noopener noreferrer" title="DoIt 0.3.0"><i class="far fa-edit fa-fw"></i> DoIt</a>
+                </div><div class="footer-line"><i class="far fa-copyright fa-fw"></i><span itemprop="copyrightYear">2023</span><span class="author" itemprop="copyrightHolder">&nbsp;<a href="/about" target="_blank" rel="noopener noreferrer">tianxin</a></span>&nbsp;|&nbsp;<span class="license"><a rel="license external nofollow noopener noreffer" href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank">CC BY-NC 4.0</a></span></div>
+            <div class="footer-line"></div>
+            <div class="footer-line">
+            </div>
+        </div></footer></div>
+
+    <div id="fixed-buttons"><a href="#back-to-top" id="back-to-top-button" class="fixed-button" title="Back to Top">
+            <i class="fas fa-arrow-up fa-fw"></i>
+        </a><a href="#" id="view-comments" class="fixed-button" title="View Comments">
+            <i class="fas fa-comment fa-fw"></i>
+        </a>
+    </div><div id="cookieconsent-container"></div><div class="assets"><link rel="stylesheet" href="/lib/katex/katex.min.css"><link rel="preload" as="style" onload="this.onload=null;this.rel='stylesheet'" href="/lib/katex/copy-tex.min.css">
+        <noscript><link rel="stylesheet" href="/lib/katex/copy-tex.min.css"></noscript><link rel="stylesheet" href="/lib/cookieconsent/cookieconsent.min.css"><script type="text/javascript">window.config={"code":{"copyTitle":"Copy to clipboard","maxShownLines":50},"comment":{},"cookieconsent":{"content":{"dismiss":"Got it!","link":"Learn more","message":"This website uses Cookies to improve your experience."},"enable":true,"palette":{"button":{"background":"#f0f0f0"},"popup":{"background":"#1aa3ff"}},"theme":"edgeless"},"math":{"delimiters":[{"display":true,"left":"$$","right":"$$"},{"display":true,"left":"\\[","right":"\\]"},{"display":false,"left":"$","right":"$"},{"display":false,"left":"\\(","right":"\\)"}],"strict":false},"search":{"distance":null,"findAllMatches":null,"fuseIndexURL":"/index.json","highlightTag":"em","ignoreFieldNorm":null,"ignoreLocation":null,"isCaseSensitive":null,"location":null,"maxResultLength":10,"minMatchCharLength":null,"noResultsFound":"No results found","snippetLength":50,"threshold":null,"type":"fuse","useExtendedSearch":null},"sharerjs":true};</script><script type="text/javascript" src="/lib/clipboard/clipboard.min.js"></script><script type="text/javascript" src="/lib/sharer/sharer.min.js"></script><script type="text/javascript" src="/lib/katex/katex.min.js" defer></script><script type="text/javascript" src="/lib/katex/auto-render.min.js" defer></script><script type="text/javascript" src="/lib/katex/copy-tex.min.js" defer></script><script type="text/javascript" src="/lib/katex/mhchem.min.js" defer></script><script type="text/javascript" src="/js/katex.min.js" defer></script><script type="text/javascript" src="/lib/cookieconsent/cookieconsent.min.js" defer></script><script type="text/javascript" src="/js/cookieconsent.min.js" defer></script><script type="text/javascript" src="/js/theme.min.js" defer></script></div>
+</body>
+
+</html>
