@@ -111,7 +111,7 @@ Q2 和 Q3 需要推导梯度计算公式，向量化版本需要思考。关于 
 
 以 Batch Normalization 为例，只要推出的梯度计算公式，写代码就清晰明了：
 
-![bn_computation_graph](bn_computation_graph.jpg)
+{{< figure src="bn_computation_graph.jpg" caption="BatchNorm 梯度推导过程" >}}
 
 CNN 的反向传播需要一点想象力。推荐阅读文章：[Convolutions and Backpropagations](https://medium.com/@pavisj/convolutions-and-backpropagations-46026a8f5d2c)
 

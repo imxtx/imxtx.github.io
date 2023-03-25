@@ -4,7 +4,14 @@
         <link>https://imxtx.github.io/posts/</link>
         <description>All Posts | Tianxin&#39;s Blog</description>
         <generator>Hugo -- gohugo.io</generator><language>en</language><managingEditor>tianxin.xie[at]outlook.com (tianxin)</managingEditor>
-            <webMaster>tianxin.xie[at]outlook.com (tianxin)</webMaster><lastBuildDate>Thu, 15 Jul 2021 00:00:00 &#43;0000</lastBuildDate><atom:link href="https://imxtx.github.io/posts/" rel="self" type="application/rss+xml" /><item>
+            <webMaster>tianxin.xie[at]outlook.com (tianxin)</webMaster><lastBuildDate>Sun, 01 Aug 2021 00:00:00 &#43;0000</lastBuildDate><atom:link href="https://imxtx.github.io/posts/" rel="self" type="application/rss+xml" /><item>
+    <title>U-Net 源码解读</title>
+    <link>https://imxtx.github.io/2021/08/unet/</link>
+    <pubDate>Sun, 01 Aug 2021 00:00:00 &#43;0000</pubDate><author>
+        <name>tianxin</name>
+    </author><guid>https://imxtx.github.io/2021/08/unet/</guid>
+    <description><![CDATA[<p>本文对 U-Net 的源码进行讲解。</p>]]></description>
+</item><item>
     <title>CS231n 学习总结</title>
     <link>https://imxtx.github.io/2021/07/cs231n_summary/</link>
     <pubDate>Thu, 15 Jul 2021 00:00:00 &#43;0000</pubDate><author>

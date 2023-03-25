@@ -21,7 +21,7 @@
 
 <meta name="theme-color" content="#f8f8f8"><meta name="msapplication-TileColor" content="#da532c"><link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
         <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
-        <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><link rel="canonical" href="https://imxtx.github.io/2021/07/cs231n_summary/" /><link rel="stylesheet" href="/lib/normalize/normalize.min.css"><link rel="stylesheet" href="/css/color.css"><link rel="stylesheet" href="/css/style.min.css"><link rel="preload" as="style" onload="this.onload=null;this.rel='stylesheet'" href="/lib/fontawesome-free/all.min.css">
+        <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><link rel="canonical" href="https://imxtx.github.io/2021/07/cs231n_summary/" /><link rel="next" href="https://imxtx.github.io/2021/08/unet/" /><link rel="stylesheet" href="/lib/normalize/normalize.min.css"><link rel="stylesheet" href="/css/color.css"><link rel="stylesheet" href="/css/style.min.css"><link rel="preload" as="style" onload="this.onload=null;this.rel='stylesheet'" href="/lib/fontawesome-free/all.min.css">
         <noscript><link rel="stylesheet" href="/lib/fontawesome-free/all.min.css"></noscript><link rel="preload" as="style" onload="this.onload=null;this.rel='stylesheet'" href="/lib/animate/animate.min.css">
         <noscript><link rel="stylesheet" href="/lib/animate/animate.min.css"></noscript><script type="application/ld+json">
     {
@@ -32,7 +32,7 @@
         "mainEntityOfPage": {
             "@type": "WebPage",
             "@id": "https:\/\/imxtx.github.io\/2021\/07\/cs231n_summary\/"
-        },"genre": "posts","keywords": "course, notes","wordcount":  2302 ,
+        },"genre": "posts","keywords": "course, notes","wordcount":  2309 ,
         "url": "https:\/\/imxtx.github.io\/2021\/07\/cs231n_summary\/","datePublished": "2021-07-15T00:00:00+00:00","dateModified": "2021-07-15T00:00:00+00:00","publisher": {
             "@type": "Organization",
             "name": ""},"author": {
@@ -135,7 +135,7 @@
                 <span class="post-author"><i class="author fas fa-user-circle fa-fw"></i><a href="/about" title="Author" rel=" author" class="author">tianxin</a>
                 </span>&nbsp;<span class="post-category">included in </span>&nbsp;<span class="post-category">category <a href="/categories/deep-learning/"><i class="far fa-folder fa-fw"></i>Deep Learning</a></span></div>
             <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2021-07-15">Posted on 2021-07-15</time>&nbsp;
-                <i class="fas fa-pencil-alt fa-fw"></i>&nbsp;2302 words&nbsp;
+                <i class="fas fa-pencil-alt fa-fw"></i>&nbsp;2309 words&nbsp;
                 <i class="far fa-clock fa-fw"></i>&nbsp;5 minutes&nbsp;</div>
         </div><div class="details toc" id="toc-static"  kept="">
                 <div class="details-summary toc-title">
@@ -248,15 +248,12 @@
 <li>Q4: Convolutional Neural Networks</li>
 </ul>
 <p>以 Batch Normalization 为例，只要推出的梯度计算公式，写代码就清晰明了：</p>
-<p><a class="lightgallery" href="/2021/07/cs231n_summary/bn_computation_graph.jpg" title="bn_computation_graph" data-thumbnail="/2021/07/cs231n_summary/bn_computation_graph.jpg">
-        <img
-            
-            loading="lazy"
-            src="bn_computation_graph.jpg"
-            srcset="/2021/07/cs231n_summary/bn_computation_graph.jpg, bn_computation_graph.jpg 1.5x, /2021/07/cs231n_summary/bn_computation_graph.jpg 2x"
-            sizes="auto"
-            alt="/2021/07/cs231n_summary/bn_computation_graph.jpg">
-    </a></p>
+<figure><img src="bn_computation_graph.jpg"
+         alt="BatchNorm 梯度推导过程"/><figcaption>
+            <p>BatchNorm 梯度推导过程</p>
+        </figcaption>
+</figure>
+
 <p>CNN 的反向传播需要一点想象力。推荐阅读文章：<a href="https://medium.com/@pavisj/convolutions-and-backpropagations-46026a8f5d2c" target="_blank" rel="noopener noreferrer">Convolutions and Backpropagations</a></p>
 <h3 id="assignment-3" class="headerLink">
     <a href="#assignment-3" class="header-mark"></a>Assignment 3</h3><p>作业 3 中比较难的是 RNN 和 Transformer 的梯度计算：</p>
@@ -293,7 +290,8 @@
         </section>
     </div>
 
-    <div class="post-nav"></div>
+    <div class="post-nav">
+            <a href="/2021/08/unet/" class="next" rel="next" title="U-Net 源码解读">U-Net 源码解读<i class="fas fa-angle-right fa-fw"></i></a></div>
 </div>
 </article></div>
         </main><footer class="footer">
