@@ -5,8 +5,8 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="robots" content="noodp" />
-    <title>【Python杂谈】在try...except...finally中return - Tianxin&#39;s Blog</title><meta name="Description" content="Tianxin&#39;s Blog, computer vision, deeplearning, pytorch, programming"><meta property="og:title" content="【Python杂谈】在try...except...finally中return" />
-<meta property="og:description" content="你应该对try...except...finally的用法熟悉： 1 2 3 4 5 6 try: pass except: pass finally: pass 不论try语句块中发生了什么异常，finally语句" />
+    <title>Python 杂谈：在 try...except...finally 中 return - Tianxin&#39;s Blog</title><meta name="Description" content="Tianxin&#39;s Blog, computer vision, deeplearning, pytorch, programming"><meta property="og:title" content="Python 杂谈：在 try...except...finally 中 return" />
+<meta property="og:description" content="你应该对下面的 try...except...finally 的用法很熟悉，但是这篇文章聊点特别的。" />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://imxtx.github.io/2019/03/python_try/" /><meta property="og:image" content="https://imxtx.github.io/logo.png"/><meta property="article:section" content="posts" />
 <meta property="article:published_time" content="2019-03-22T00:00:00+00:00" />
@@ -14,8 +14,8 @@
 <meta name="twitter:card" content="summary_large_image"/>
 <meta name="twitter:image" content="https://imxtx.github.io/logo.png"/>
 
-<meta name="twitter:title" content="【Python杂谈】在try...except...finally中return"/>
-<meta name="twitter:description" content="你应该对try...except...finally的用法熟悉： 1 2 3 4 5 6 try: pass except: pass finally: pass 不论try语句块中发生了什么异常，finally语句"/>
+<meta name="twitter:title" content="Python 杂谈：在 try...except...finally 中 return"/>
+<meta name="twitter:description" content="你应该对下面的 try...except...finally 的用法很熟悉，但是这篇文章聊点特别的。"/>
 <meta name="application-name" content="Tianxin&#39;s Blog">
 <meta name="apple-mobile-web-app-title" content="Tianxin&#39;s Blog">
 
@@ -27,12 +27,12 @@
     {
         "@context": "http://schema.org",
         "@type": "BlogPosting",
-        "headline": "【Python杂谈】在try...except...finally中return",
+        "headline": "Python 杂谈：在 try...except...finally 中 return",
         "inLanguage": "en",
         "mainEntityOfPage": {
             "@type": "WebPage",
             "@id": "https:\/\/imxtx.github.io\/2019\/03\/python_try\/"
-        },"genre": "posts","keywords": "python","wordcount":  1169 ,
+        },"genre": "posts","keywords": "python","wordcount":  998 ,
         "url": "https:\/\/imxtx.github.io\/2019\/03\/python_try\/","datePublished": "2019-03-22T00:00:00+00:00","dateModified": "2019-03-22T00:00:00+00:00","publisher": {
             "@type": "Organization",
             "name": ""},"author": {
@@ -114,29 +114,21 @@
 <main class="main">
             <div class="container"><div class="toc" id="toc-auto">
         <h2 class="toc-title">Contents</h2>
-        <div class="toc-content" id="toc-content-auto"><nav id="TableOfContents">
-  <ul>
-    <li><a href="#总结">总结</a></li>
-  </ul>
-</nav></div>
-    </div><script>document.getElementsByTagName("main")[0].setAttribute("pageStyle", "normal")</script><script>document.getElementsByTagName("main")[0].setAttribute("autoTOC", "true")</script><article class="page single"><h1 class="single-title animate__animated animate__flipInX">【Python杂谈】在try...except...finally中return</h1><div class="post-meta">
+        <div class="toc-content" id="toc-content-auto"><nav id="TableOfContents"></nav></div>
+    </div><script>document.getElementsByTagName("main")[0].setAttribute("pageStyle", "normal")</script><script>document.getElementsByTagName("main")[0].setAttribute("autoTOC", "true")</script><article class="page single"><h1 class="single-title animate__animated animate__flipInX">Python 杂谈：在 try...except...finally 中 return</h1><div class="post-meta">
             <div class="post-meta-line">
                 <span class="post-author"><i class="author fas fa-user-circle fa-fw"></i><a href="/about" title="Author" rel=" author" class="author">tianxin</a>
                 </span>&nbsp;<span class="post-category">included in </span>&nbsp;<span class="post-category">category <a href="/categories/python/"><i class="far fa-folder fa-fw"></i>python</a></span></div>
             <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2019-03-22">Posted on 2019-03-22</time>&nbsp;
-                <i class="fas fa-pencil-alt fa-fw"></i>&nbsp;1169 words&nbsp;
-                <i class="far fa-clock fa-fw"></i>&nbsp;3 minutes&nbsp;</div>
+                <i class="fas fa-pencil-alt fa-fw"></i>&nbsp;998 words&nbsp;
+                <i class="far fa-clock fa-fw"></i>&nbsp;2 minutes&nbsp;</div>
         </div><div class="details toc" id="toc-static"  kept="">
                 <div class="details-summary toc-title">
                     <span>Contents</span>
                     <span><i class="details-icon fas fa-angle-right"></i></span>
                 </div>
-                <div class="details-content toc-content" id="toc-content-static"><nav id="TableOfContents">
-  <ul>
-    <li><a href="#总结">总结</a></li>
-  </ul>
-</nav></div>
-            </div><div class="content" id="content"><p>你应该对<code>try...except...finally</code>的用法熟悉：</p>
+                <div class="details-content toc-content" id="toc-content-static"><nav id="TableOfContents"></nav></div>
+            </div><div class="content" id="content"><p>你应该对下面的 <code>try...except...finally</code> 的用法很熟悉，但是这篇文章聊点特别的。</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
 <pre tabindex="0" class="chroma"><code><span class="lnt">1
@@ -155,7 +147,7 @@
 </span></span><span class="line"><span class="cl">    <span class="k">pass</span>
 </span></span></code></pre></td></tr></table>
 </div>
-</div><p>不论<code>try</code>语句块中发生了什么异常，<code>finally</code>语句块中的代码都会被执行。所以我们通常在<code>finally</code>语句块中做清理工作，例如关闭文件等等。</p>
+</div><p>不论 <code>try</code> 语句块中发生了什么异常，<code>finally</code> 语句块中的代码都会被执行。所以我们通常在 <code>finally</code> 语句块中做清理工作，例如关闭文件等等。</p>
 <p>请看下面的代码，输出是什么呢？</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
@@ -177,18 +169,18 @@
 </span></span><span class="line"><span class="cl"><span class="nb">print</span><span class="p">(</span><span class="n">f</span><span class="p">())</span>
 </span></span></code></pre></td></tr></table>
 </div>
-</div><p><code>finally</code>块中的代码必定执行，所以输出如下：</p>
+</div><p><code>finally</code> 块中的代码必定执行，所以输出如下：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
 <pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-text" data-lang="text"><span class="line"><span class="cl">hehe
-</span></span><span class="line"><span class="cl">1
+<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">hehe
+</span></span><span class="line"><span class="cl"><span class="m">1</span>
 </span></span></code></pre></td></tr></table>
 </div>
-</div><p>也就是说，虽然<code>try</code>中有<code>return</code>语句，但是退出<code>try...finally</code>块之前，也一定会执行<code>finally</code>块中的语句。</p>
+</div><p>也就是说，虽然 <code>try</code> 中有 <code>return</code> 语句，但是退出 <code>try...finally</code> 块之前，也一定会执行 <code>finally</code> 块中的语句。</p>
 <p>接着，你可能会尝试这样做：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
@@ -219,11 +211,11 @@
 </span><span class="lnt">2
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-text" data-lang="text"><span class="line"><span class="cl">hehe
-</span></span><span class="line"><span class="cl">2
+<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">hehe
+</span></span><span class="line"><span class="cl"><span class="m">2</span>
 </span></span></code></pre></td></tr></table>
 </div>
-</div><p>可以看出，虽然<code>try</code>中返回的是1，但是因为返回之前执行了<code>finally</code>块中的语句，所以返回值被更新成了2。过程如下：</p>
+</div><p>可以看出，虽然 <code>try</code> 中返回的是 1，但是因为返回之前执行了 <code>finally</code> 块中的语句，所以返回值被更新成了 2。过程如下：</p>
 <div class="mermaid" id="id-1"></div><p>下面来尝试一个更加奇怪的：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
@@ -258,12 +250,12 @@
 </span><span class="lnt">2
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-text" data-lang="text"><span class="line"><span class="cl">value of i: 12
-</span></span><span class="line"><span class="cl">2
+<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">value of i: <span class="m">12</span>
+</span></span><span class="line"><span class="cl"><span class="m">2</span>
 </span></span></code></pre></td></tr></table>
 </div>
-</div><p>因为输出了“value of i: 12”，那么<code>finally</code>块肯定是被执行了的。而且<code>i</code>的值在<code>finally</code>块中也被修改为了12。但是函数<code>f</code>的返回值为仍然为<code>try</code>块中返回的2。</p>
-<p>原因是在执行<code>return</code>语句时，Python会将当前的返回值放到函数调用栈顶，在函数返回后弹出。所以，虽然<code>finally</code>中修改了i的值，但是并没有修改函数调用栈顶部的返回值，除非再在<code>finally</code>块中执行一个<code>return</code>语句来覆盖栈顶的返回值。过程如下：</p>
+</div><p>因为输出了 “value of i: 12”，那么 <code>finally</code> 块肯定是被执行了的。而且 <code>i</code> 的值在 <code>finally</code> 块中也被修改为了 12。但是函数 <code>f</code> 的返回值为仍然为 <code>try</code> 块中返回的 2。</p>
+<p>原因是在执行 <code>return</code> 语句时，Python 会将当前的返回值放到函数调用栈顶，在函数返回后弹出。所以，虽然 <code>finally</code> 中修改了 <code>i</code> 的值，但是并没有修改函数调用栈顶部的返回值，除非再在 <code>finally</code> 块中执行一个 <code>return</code> 语句来覆盖栈顶的返回值。过程如下：</p>
 <div class="mermaid" id="id-2"></div><p>原来是这样。那你可能又会尝试下面的代码：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
@@ -293,7 +285,7 @@
 </span></span><span class="line"><span class="cl"><span class="nb">print</span><span class="p">(</span><span class="n">f</span><span class="p">())</span>
 </span></span></code></pre></td></tr></table>
 </div>
-</div><p>你在<code>return i</code>下面加了一行<code>return i + 1</code>，想试着更改返回值？不要被<code>finally</code>搞糊涂了，<code>return</code>就是<code>return</code>，只要执行了<code>return</code>，那就标志结束当前函数，将控制权交给调用者，而后面的代码是一定不会执行了。但是<code>finally</code>又是如此特殊，它允许我们在退出<code>try...finally...</code>块之前执行额外的代码，上面代码的执行过程如下：</p>
+</div><p>你在 <code>return i</code> 下面加了一行 <code>return i + 1</code> ，想试着更改返回值？不要被 <code>finally</code> 搞糊涂了，<code>return</code> 就是 <code>return</code>，只要执行了 <code>return</code>，那就标志结束当前函数，将控制权交给调用者，而后面的代码是一定不会执行了。但是 <code>finally</code> 又是如此特殊，它允许我们在退出 <code>try...finally...</code> 块之前执行额外的代码，上面代码的执行过程如下：</p>
 <div class="mermaid" id="id-3"></div><p>另外，我们把except加上会是什么样的呢：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
@@ -321,18 +313,18 @@
 </span></span><span class="line"><span class="cl"><span class="nb">print</span><span class="p">(</span><span class="n">f</span><span class="p">())</span>
 </span></span></code></pre></td></tr></table>
 </div>
-</div><p>上面的<code>raise</code>根本不会执行，所以输出你应该能猜得到：</p>
+</div><p>上面的 <code>raise</code> 根本不会执行，所以输出你应该能猜得到：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
 <pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-text" data-lang="text"><span class="line"><span class="cl">hehe
-</span></span><span class="line"><span class="cl">1
+<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">hehe
+</span></span><span class="line"><span class="cl"><span class="m">1</span>
 </span></span></code></pre></td></tr></table>
 </div>
-</div><p>把<code>raise</code>放到<code>return 1</code>前面：</p>
+</div><p>把 <code>raise</code> 放到 <code>return 1</code> 前面：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
 <pre tabindex="0" class="chroma"><code><span class="lnt"> 1
@@ -366,11 +358,11 @@
 </span><span class="lnt">2
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-text" data-lang="text"><span class="line"><span class="cl">hehe
-</span></span><span class="line"><span class="cl">2
+<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">hehe
+</span></span><span class="line"><span class="cl"><span class="m">2</span>
 </span></span></code></pre></td></tr></table>
 </div>
-</div><p>因为抛出了异常，所以<code>return 1</code>也不会执行了，直接进入<code>except</code>块中。因为<code>finally</code>必定执行，所以下面代码的输出，不用说你也知道：</p>
+</div><p>因为抛出了异常，所以 <code>return 1</code> 也不会执行了，直接进入 <code>except</code> 块中。因为 <code>finally</code> 必定执行，所以下面代码的输出，不用说你也知道：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
 <pre tabindex="0" class="chroma"><code><span class="lnt"> 1
@@ -399,13 +391,22 @@
 </span></span><span class="line"><span class="cl"><span class="nb">print</span><span class="p">(</span><span class="n">f</span><span class="p">())</span>
 </span></span></code></pre></td></tr></table>
 </div>
-</div><h2 id="总结" class="headerLink">
-    <a href="#%e6%80%bb%e7%bb%93" class="header-mark"></a>总结</h2><p>两点：</p>
-<ul>
-<li>try和except中return语句设定的返回值，可以在finally块中被修改；</li>
-<li>实践中不要在finally中使用return，这是一种不好的代码，容易让人产生疑惑。finally块主要用于进行清理工作。</li>
-</ul>
+</div><p>输出：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">hehe
+</span></span><span class="line"><span class="cl"><span class="m">3</span>
+</span></span></code></pre></td></tr></table>
 </div>
+</div><p>总结两点：</p>
+<ul>
+<li><code>try</code> 和 <code>except</code> 中 <code>return</code> 语句设定的返回值，可以在 <code>finally</code> 块中被修改；</li>
+<li>实践中不要在 <code>finally</code> 中使用 <code>return</code>，这是一种不好的代码，容易让人产生疑惑。<code>finally</code> 块主要用于进行清理工作。</li>
+</ul></div>
 
         <div class="post-footer" id="post-footer">
     <div class="post-info">
@@ -415,7 +416,7 @@
             </div>
             <div class="post-info-license"></div>
             <div class="post-info-share">
-                <span><a href="#" title="Share on Twitter" data-sharer="twitter" data-url="https://imxtx.github.io/2019/03/python_try/" data-title="【Python杂谈】在try...except...finally中return" data-via="@imxietx" data-hashtags="python"><i class="fab fa-twitter fa-fw"></i></a><a href="#" title="Share on Facebook" data-sharer="facebook" data-url="https://imxtx.github.io/2019/03/python_try/" data-hashtag="python"><i class="fab fa-facebook-square fa-fw"></i></a><a href="#" title="Share on Reddit" data-sharer="reddit" data-url="https://imxtx.github.io/2019/03/python_try/"><i class="fab fa-reddit fa-fw"></i></a><a href="#" title="Share on 微博" data-sharer="weibo" data-url="https://imxtx.github.io/2019/03/python_try/" data-title="【Python杂谈】在try...except...finally中return"><i class="fab fa-weibo fa-fw"></i></a></span>
+                <span><a href="#" title="Share on Twitter" data-sharer="twitter" data-url="https://imxtx.github.io/2019/03/python_try/" data-title="Python 杂谈：在 try...except...finally 中 return" data-via="@imxietx" data-hashtags="python"><i class="fab fa-twitter fa-fw"></i></a><a href="#" title="Share on Facebook" data-sharer="facebook" data-url="https://imxtx.github.io/2019/03/python_try/" data-hashtag="python"><i class="fab fa-facebook-square fa-fw"></i></a><a href="#" title="Share on Reddit" data-sharer="reddit" data-url="https://imxtx.github.io/2019/03/python_try/"><i class="fab fa-reddit fa-fw"></i></a><a href="#" title="Share on 微博" data-sharer="weibo" data-url="https://imxtx.github.io/2019/03/python_try/" data-title="Python 杂谈：在 try...except...finally 中 return"><i class="fab fa-weibo fa-fw"></i></a></span>
             </div>
         </div>
         <div class="post-info-line">

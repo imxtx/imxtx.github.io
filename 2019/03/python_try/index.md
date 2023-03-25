@@ -1,7 +1,8 @@
-# 【Python杂谈】在try...except...finally中return
+# Python 杂谈：在 try...except...finally 中 return
 
 
-你应该对`try...except...finally`的用法熟悉：
+你应该对下面的 `try...except...finally` 的用法很熟悉，但是这篇文章聊点特别的。
+<!--more-->
 
 ```python
 try:
@@ -12,7 +13,7 @@ finally:
     pass
 ```
 
-不论`try`语句块中发生了什么异常，`finally`语句块中的代码都会被执行。所以我们通常在`finally`语句块中做清理工作，例如关闭文件等等。
+不论 `try` 语句块中发生了什么异常，`finally` 语句块中的代码都会被执行。所以我们通常在 `finally` 语句块中做清理工作，例如关闭文件等等。
 
 请看下面的代码，输出是什么呢？
 
@@ -26,14 +27,14 @@ def f():
 print(f())
 ```
 
-`finally`块中的代码必定执行，所以输出如下：
+`finally` 块中的代码必定执行，所以输出如下：
 
-```text
+```bash
 hehe
 1
 ```
 
-也就是说，虽然`try`中有`return`语句，但是退出`try...finally`块之前，也一定会执行`finally`块中的语句。
+也就是说，虽然 `try` 中有 `return` 语句，但是退出 `try...finally` 块之前，也一定会执行 `finally` 块中的语句。
 
 接着，你可能会尝试这样做：
 
@@ -50,12 +51,12 @@ print(f())
 
 输出：
 
-```text
+```bash
 hehe
 2
 ```
 
-可以看出，虽然`try`中返回的是1，但是因为返回之前执行了`finally`块中的语句，所以返回值被更新成了2。过程如下：
+可以看出，虽然 `try` 中返回的是 1，但是因为返回之前执行了 `finally` 块中的语句，所以返回值被更新成了 2。过程如下：
 
 ```mermaid
 graph LR
@@ -84,14 +85,14 @@ print(f())
 
 输出：
 
-```text
+```bash
 value of i: 12
 2
 ```
 
-因为输出了“value of i: 12”，那么`finally`块肯定是被执行了的。而且`i`的值在`finally`块中也被修改为了12。但是函数`f`的返回值为仍然为`try`块中返回的2。
+因为输出了 “value of i: 12”，那么 `finally` 块肯定是被执行了的。而且 `i` 的值在 `finally` 块中也被修改为了 12。但是函数 `f` 的返回值为仍然为 `try` 块中返回的 2。
 
-原因是在执行`return`语句时，Python会将当前的返回值放到函数调用栈顶，在函数返回后弹出。所以，虽然`finally`中修改了i的值，但是并没有修改函数调用栈顶部的返回值，除非再在`finally`块中执行一个`return`语句来覆盖栈顶的返回值。过程如下：
+原因是在执行 `return` 语句时，Python 会将当前的返回值放到函数调用栈顶，在函数返回后弹出。所以，虽然 `finally` 中修改了 `i` 的值，但是并没有修改函数调用栈顶部的返回值，除非再在 `finally` 块中执行一个 `return` 语句来覆盖栈顶的返回值。过程如下：
 
 ```mermaid
 graph LR
@@ -118,7 +119,7 @@ def f():
 print(f())
 ```
 
-你在`return i`下面加了一行`return i + 1`，想试着更改返回值？不要被`finally`搞糊涂了，`return`就是`return`，只要执行了`return`，那就标志结束当前函数，将控制权交给调用者，而后面的代码是一定不会执行了。但是`finally`又是如此特殊，它允许我们在退出`try...finally...`块之前执行额外的代码，上面代码的执行过程如下：
+你在 `return i` 下面加了一行 `return i + 1` ，想试着更改返回值？不要被 `finally` 搞糊涂了，`return` 就是 `return`，只要执行了 `return`，那就标志结束当前函数，将控制权交给调用者，而后面的代码是一定不会执行了。但是 `finally` 又是如此特殊，它允许我们在退出 `try...finally...` 块之前执行额外的代码，上面代码的执行过程如下：
 
 ```mermaid
 graph LR
@@ -144,14 +145,14 @@ def f():
 print(f())
 ```
 
-上面的`raise`根本不会执行，所以输出你应该能猜得到：
+上面的 `raise` 根本不会执行，所以输出你应该能猜得到：
 
-```text
+```bash
 hehe
 1
 ```
 
-把`raise`放到`return 1`前面：
+把 `raise` 放到 `return 1` 前面：
 
 ```python
 def f():
@@ -168,12 +169,12 @@ print(f())
 
 输出：
 
-```text
+```bash
 hehe
 2
 ```
 
-因为抛出了异常，所以`return 1`也不会执行了，直接进入`except`块中。因为`finally`必定执行，所以下面代码的输出，不用说你也知道：
+因为抛出了异常，所以 `return 1` 也不会执行了，直接进入 `except` 块中。因为 `finally` 必定执行，所以下面代码的输出，不用说你也知道：
 
 ```python
 def f():
@@ -189,10 +190,15 @@ def f():
 print(f())
 ```
 
-## 总结
+输出：
 
-两点：
+```bash
+hehe
+3
+```
 
-* try和except中return语句设定的返回值，可以在finally块中被修改；
-* 实践中不要在finally中使用return，这是一种不好的代码，容易让人产生疑惑。finally块主要用于进行清理工作。
+总结两点：
+
+* `try` 和 `except` 中 `return` 语句设定的返回值，可以在 `finally` 块中被修改；
+* 实践中不要在 `finally` 中使用 `return`，这是一种不好的代码，容易让人产生疑惑。`finally` 块主要用于进行清理工作。
 
