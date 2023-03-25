@@ -1,0 +1,15 @@
+<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">
+    <channel>
+        <title>python - Category - Tianxin&#39;s Blog</title>
+        <link>https://imxtx.github.io/categories/python/</link>
+        <description>python - Category - Tianxin&#39;s Blog</description>
+        <generator>Hugo -- gohugo.io</generator><language>en</language><managingEditor>tianxin.xie[at]outlook.com (tianxin)</managingEditor>
+            <webMaster>tianxin.xie[at]outlook.com (tianxin)</webMaster><lastBuildDate>Fri, 22 Mar 2019 00:00:00 &#43;0000</lastBuildDate><atom:link href="https://imxtx.github.io/categories/python/" rel="self" type="application/rss+xml" /><item>
+    <title>【Python杂谈】在try...except...finally中return</title>
+    <link>https://imxtx.github.io/2019/03/python_try/</link>
+    <pubDate>Fri, 22 Mar 2019 00:00:00 &#43;0000</pubDate><author>
+        <name>tianxin</name>
+    </author><guid>https://imxtx.github.io/2019/03/python_try/</guid>
+    <description><![CDATA[你应该对try...except...finally的用法熟悉： 1 2 3 4 5 6 try: pass except: pass finally: pass 不论try语句块中发生了什么异常，finally语句]]></description>
+</item></channel>
+</rss>
