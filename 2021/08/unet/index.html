@@ -32,7 +32,7 @@
         "mainEntityOfPage": {
             "@type": "WebPage",
             "@id": "https:\/\/imxtx.github.io\/2021\/08\/unet\/"
-        },"genre": "posts","keywords": "notes, models","wordcount":  2575 ,
+        },"genre": "posts","keywords": "notes, models","wordcount":  2582 ,
         "url": "https:\/\/imxtx.github.io\/2021\/08\/unet\/","datePublished": "2021-08-01T00:00:00+00:00","dateModified": "2021-08-01T00:00:00+00:00","publisher": {
             "@type": "Organization",
             "name": ""},"author": {
@@ -116,6 +116,7 @@
         <h2 class="toc-title">Contents</h2>
         <div class="toc-content" id="toc-content-auto"><nav id="TableOfContents">
   <ul>
+    <li><a href="#u-net-简介">U-Net 简介</a></li>
     <li><a href="#编码过程">编码过程</a></li>
     <li><a href="#解码过程">解码过程</a></li>
     <li><a href="#转置卷积-vs-双线性插值">转置卷积 vs 双线性插值</a></li>
@@ -128,7 +129,7 @@
                 <span class="post-author"><i class="author fas fa-user-circle fa-fw"></i><a href="/about" title="Author" rel=" author" class="author">tianxin</a>
                 </span>&nbsp;<span class="post-category">included in </span>&nbsp;<span class="post-category">category <a href="/categories/deep-learning/"><i class="far fa-folder fa-fw"></i>Deep Learning</a></span></div>
             <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2021-08-01">Posted on 2021-08-01</time>&nbsp;
-                <i class="fas fa-pencil-alt fa-fw"></i>&nbsp;2575 words&nbsp;
+                <i class="fas fa-pencil-alt fa-fw"></i>&nbsp;2582 words&nbsp;
                 <i class="far fa-clock fa-fw"></i>&nbsp;6 minutes&nbsp;</div>
         </div><div class="details toc" id="toc-static"  kept="">
                 <div class="details-summary toc-title">
@@ -137,6 +138,7 @@
                 </div>
                 <div class="details-content toc-content" id="toc-content-static"><nav id="TableOfContents">
   <ul>
+    <li><a href="#u-net-简介">U-Net 简介</a></li>
     <li><a href="#编码过程">编码过程</a></li>
     <li><a href="#解码过程">解码过程</a></li>
     <li><a href="#转置卷积-vs-双线性插值">转置卷积 vs 双线性插值</a></li>
@@ -145,7 +147,8 @@
   </ul>
 </nav></div>
             </div><div class="content" id="content"><p>本文对 U-Net 的源码进行讲解。</p>
-<p>U-Net 最初是在 2015 年为了解决医学图像分割而被提出来的，由于其性能非常不错，目前仍有非常广泛的应用。本文主要对 U-Net 的源码进行解读，论文链接：<a href="https://arxiv.org/abs/1505.04597" target="_blank" rel="noopener noreferrer">https://arxiv.org/abs/1505.04597</a></p>
+<h2 id="u-net-简介" class="headerLink">
+    <a href="#u-net-%e7%ae%80%e4%bb%8b" class="header-mark"></a>U-Net 简介</h2><p>U-Net 最初是在 2015 年为了解决医学图像分割而被提出来的，由于其性能非常不错，目前仍有非常广泛的应用。本文主要对 U-Net 的源码进行解读，论文链接：<a href="https://arxiv.org/abs/1505.04597" target="_blank" rel="noopener noreferrer">https://arxiv.org/abs/1505.04597</a></p>
 <p>如下图所示，U-Net 之所以叫做 U-Net 是因为它看起来像个大写的字母 U。U-Net 在形式上也可以归为自编码器，由编码器和解码器构成。</p>
 <figure><img src="u-net-architecture.png"
          alt="U-Net 结构图"/><figcaption>
