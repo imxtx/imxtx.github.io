@@ -1,10 +1,17 @@
 <rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">
     <channel>
-        <title>python - Category - Tianxin&#39;s Blog</title>
+        <title>Python - Category - Tianxin&#39;s Blog</title>
         <link>https://imxtx.github.io/categories/python/</link>
-        <description>python - Category - Tianxin&#39;s Blog</description>
+        <description>Python - Category - Tianxin&#39;s Blog</description>
         <generator>Hugo -- gohugo.io</generator><language>en</language><managingEditor>tianxin.xie[at]outlook.com (tianxin)</managingEditor>
-            <webMaster>tianxin.xie[at]outlook.com (tianxin)</webMaster><lastBuildDate>Fri, 22 Mar 2019 00:00:00 &#43;0000</lastBuildDate><atom:link href="https://imxtx.github.io/categories/python/" rel="self" type="application/rss+xml" /><item>
+            <webMaster>tianxin.xie[at]outlook.com (tianxin)</webMaster><lastBuildDate>Thu, 28 Mar 2019 00:00:00 &#43;0000</lastBuildDate><atom:link href="https://imxtx.github.io/categories/python/" rel="self" type="application/rss+xml" /><item>
+    <title>Python 杂谈：with 与上下文管理器</title>
+    <link>https://imxtx.github.io/2019/03/python_with_context/</link>
+    <pubDate>Thu, 28 Mar 2019 00:00:00 &#43;0000</pubDate><author>
+        <name>tianxin</name>
+    </author><guid>https://imxtx.github.io/2019/03/python_with_context/</guid>
+    <description><![CDATA[<p>本文简单介绍 Python 中的 with 与上下文管理器，以及如何自定义上下文管理器。</p>]]></description>
+</item><item>
     <title>Python 杂谈：在 try...except...finally 中 return</title>
     <link>https://imxtx.github.io/2019/03/python_try/</link>
     <pubDate>Fri, 22 Mar 2019 00:00:00 &#43;0000</pubDate><author>

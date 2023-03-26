@@ -19,6 +19,13 @@
     </author><guid>https://imxtx.github.io/2021/07/cs231n_summary/</guid>
     <description><![CDATA[<p>断断续续花了大约五周的时间学完了 CS231n，是时候总结一下自己遇到的问题和收获了。</p>]]></description>
 </item><item>
+    <title>Python 杂谈：with 与上下文管理器</title>
+    <link>https://imxtx.github.io/2019/03/python_with_context/</link>
+    <pubDate>Thu, 28 Mar 2019 00:00:00 &#43;0000</pubDate><author>
+        <name>tianxin</name>
+    </author><guid>https://imxtx.github.io/2019/03/python_with_context/</guid>
+    <description><![CDATA[<p>本文简单介绍 Python 中的 with 与上下文管理器，以及如何自定义上下文管理器。</p>]]></description>
+</item><item>
     <title>Python 杂谈：在 try...except...finally 中 return</title>
     <link>https://imxtx.github.io/2019/03/python_try/</link>
     <pubDate>Fri, 22 Mar 2019 00:00:00 &#43;0000</pubDate><author>

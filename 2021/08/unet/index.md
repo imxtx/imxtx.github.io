@@ -308,7 +308,7 @@ if __name__ == "__main__":
 
 最后可以测试一下实现是否正确：
 
-```bash
+```plain
 imxtx@ubuntu:~/code$ python models/unet.py 
 torch.Size([3, 1, 255, 255])
 torch.Size([3, 1, 255, 255])

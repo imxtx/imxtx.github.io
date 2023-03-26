@@ -1,0 +1,15 @@
+<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">
+    <channel>
+        <title>pytorch - Tag - Tianxin&#39;s Blog</title>
+        <link>https://imxtx.github.io/tags/pytorch/</link>
+        <description>pytorch - Tag - Tianxin&#39;s Blog</description>
+        <generator>Hugo -- gohugo.io</generator><language>en</language><managingEditor>tianxin.xie[at]outlook.com (tianxin)</managingEditor>
+            <webMaster>tianxin.xie[at]outlook.com (tianxin)</webMaster><lastBuildDate>Sun, 01 Aug 2021 00:00:00 &#43;0000</lastBuildDate><atom:link href="https://imxtx.github.io/tags/pytorch/" rel="self" type="application/rss+xml" /><item>
+    <title>U-Net 源码解读</title>
+    <link>https://imxtx.github.io/2021/08/unet/</link>
+    <pubDate>Sun, 01 Aug 2021 00:00:00 &#43;0000</pubDate><author>
+        <name>tianxin</name>
+    </author><guid>https://imxtx.github.io/2021/08/unet/</guid>
+    <description><![CDATA[<p>本文对 U-Net 的源码进行讲解。</p>]]></description>
+</item></channel>
+</rss>

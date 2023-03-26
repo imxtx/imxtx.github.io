@@ -29,7 +29,7 @@ print(f())
 
 `finally` 块中的代码必定执行，所以输出如下：
 
-```bash
+```plain
 hehe
 1
 ```
@@ -51,7 +51,7 @@ print(f())
 
 输出：
 
-```bash
+```plain
 hehe
 2
 ```
@@ -85,7 +85,7 @@ print(f())
 
 输出：
 
-```bash
+```plain
 value of i: 12
 2
 ```
@@ -147,7 +147,7 @@ print(f())
 
 上面的 `raise` 根本不会执行，所以输出你应该能猜得到：
 
-```bash
+```plain
 hehe
 1
 ```
@@ -169,7 +169,7 @@ print(f())
 
 输出：
 
-```bash
+```plain
 hehe
 2
 ```
@@ -192,7 +192,7 @@ print(f())
 
 输出：
 
-```bash
+```plain
 hehe
 3
 ```

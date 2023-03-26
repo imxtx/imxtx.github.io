@@ -21,7 +21,7 @@
 
 <meta name="theme-color" content="#f8f8f8"><meta name="msapplication-TileColor" content="#da532c"><link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
         <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
-        <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><link rel="canonical" href="https://imxtx.github.io/2019/03/python_try/" /><link rel="next" href="https://imxtx.github.io/2021/07/cs231n_summary/" /><link rel="stylesheet" href="/lib/normalize/normalize.min.css"><link rel="stylesheet" href="/css/color.css"><link rel="stylesheet" href="/css/style.min.css"><link rel="preload" as="style" onload="this.onload=null;this.rel='stylesheet'" href="/lib/fontawesome-free/all.min.css">
+        <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><link rel="canonical" href="https://imxtx.github.io/2019/03/python_try/" /><link rel="next" href="https://imxtx.github.io/2019/03/python_with_context/" /><link rel="stylesheet" href="/lib/normalize/normalize.min.css"><link rel="stylesheet" href="/css/color.css"><link rel="stylesheet" href="/css/style.min.css"><link rel="preload" as="style" onload="this.onload=null;this.rel='stylesheet'" href="/lib/fontawesome-free/all.min.css">
         <noscript><link rel="stylesheet" href="/lib/fontawesome-free/all.min.css"></noscript><link rel="preload" as="style" onload="this.onload=null;this.rel='stylesheet'" href="/lib/animate/animate.min.css">
         <noscript><link rel="stylesheet" href="/lib/animate/animate.min.css"></noscript><script type="application/ld+json">
     {
@@ -118,7 +118,7 @@
     </div><script>document.getElementsByTagName("main")[0].setAttribute("pageStyle", "normal")</script><script>document.getElementsByTagName("main")[0].setAttribute("autoTOC", "true")</script><article class="page single"><h1 class="single-title animate__animated animate__flipInX">Python 杂谈：在 try...except...finally 中 return</h1><div class="post-meta">
             <div class="post-meta-line">
                 <span class="post-author"><i class="author fas fa-user-circle fa-fw"></i><a href="/about" title="Author" rel=" author" class="author">tianxin</a>
-                </span>&nbsp;<span class="post-category">included in </span>&nbsp;<span class="post-category">category <a href="/categories/python/"><i class="far fa-folder fa-fw"></i>python</a></span></div>
+                </span>&nbsp;<span class="post-category">included in </span>&nbsp;<span class="post-category">category <a href="/categories/python/"><i class="far fa-folder fa-fw"></i>Python</a></span></div>
             <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2019-03-22">Posted on 2019-03-22</time>&nbsp;
                 <i class="fas fa-pencil-alt fa-fw"></i>&nbsp;998 words&nbsp;
                 <i class="far fa-clock fa-fw"></i>&nbsp;2 minutes&nbsp;</div>
@@ -176,8 +176,8 @@
 </span><span class="lnt">2
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">hehe
-</span></span><span class="line"><span class="cl"><span class="m">1</span>
+<pre tabindex="0" class="chroma"><code class="language-plain" data-lang="plain"><span class="line"><span class="cl">hehe
+</span></span><span class="line"><span class="cl">1
 </span></span></code></pre></td></tr></table>
 </div>
 </div><p>也就是说，虽然 <code>try</code> 中有 <code>return</code> 语句，但是退出 <code>try...finally</code> 块之前，也一定会执行 <code>finally</code> 块中的语句。</p>
@@ -211,8 +211,8 @@
 </span><span class="lnt">2
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">hehe
-</span></span><span class="line"><span class="cl"><span class="m">2</span>
+<pre tabindex="0" class="chroma"><code class="language-plain" data-lang="plain"><span class="line"><span class="cl">hehe
+</span></span><span class="line"><span class="cl">2
 </span></span></code></pre></td></tr></table>
 </div>
 </div><p>可以看出，虽然 <code>try</code> 中返回的是 1，但是因为返回之前执行了 <code>finally</code> 块中的语句，所以返回值被更新成了 2。过程如下：</p>
@@ -250,8 +250,8 @@
 </span><span class="lnt">2
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">value of i: <span class="m">12</span>
-</span></span><span class="line"><span class="cl"><span class="m">2</span>
+<pre tabindex="0" class="chroma"><code class="language-plain" data-lang="plain"><span class="line"><span class="cl">value of i: 12
+</span></span><span class="line"><span class="cl">2
 </span></span></code></pre></td></tr></table>
 </div>
 </div><p>因为输出了 “value of i: 12”，那么 <code>finally</code> 块肯定是被执行了的。而且 <code>i</code> 的值在 <code>finally</code> 块中也被修改为了 12。但是函数 <code>f</code> 的返回值为仍然为 <code>try</code> 块中返回的 2。</p>
@@ -320,8 +320,8 @@
 </span><span class="lnt">2
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">hehe
-</span></span><span class="line"><span class="cl"><span class="m">1</span>
+<pre tabindex="0" class="chroma"><code class="language-plain" data-lang="plain"><span class="line"><span class="cl">hehe
+</span></span><span class="line"><span class="cl">1
 </span></span></code></pre></td></tr></table>
 </div>
 </div><p>把 <code>raise</code> 放到 <code>return 1</code> 前面：</p>
@@ -358,8 +358,8 @@
 </span><span class="lnt">2
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">hehe
-</span></span><span class="line"><span class="cl"><span class="m">2</span>
+<pre tabindex="0" class="chroma"><code class="language-plain" data-lang="plain"><span class="line"><span class="cl">hehe
+</span></span><span class="line"><span class="cl">2
 </span></span></code></pre></td></tr></table>
 </div>
 </div><p>因为抛出了异常，所以 <code>return 1</code> 也不会执行了，直接进入 <code>except</code> 块中。因为 <code>finally</code> 必定执行，所以下面代码的输出，不用说你也知道：</p>
@@ -398,8 +398,8 @@
 </span><span class="lnt">2
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">hehe
-</span></span><span class="line"><span class="cl"><span class="m">3</span>
+<pre tabindex="0" class="chroma"><code class="language-plain" data-lang="plain"><span class="line"><span class="cl">hehe
+</span></span><span class="line"><span class="cl">3
 </span></span></code></pre></td></tr></table>
 </div>
 </div><p>总结两点：</p>
@@ -433,7 +433,7 @@
     </div>
 
     <div class="post-nav">
-            <a href="/2021/07/cs231n_summary/" class="next" rel="next" title="CS231n 学习总结">CS231n 学习总结<i class="fas fa-angle-right fa-fw"></i></a></div>
+            <a href="/2019/03/python_with_context/" class="next" rel="next" title="Python 杂谈：with 与上下文管理器">Python 杂谈：with 与上下文管理器<i class="fas fa-angle-right fa-fw"></i></a></div>
 </div>
 </article></div>
         </main><footer class="footer">
