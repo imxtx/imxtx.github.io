@@ -1,0 +1,15 @@
+<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">
+    <channel>
+        <title>deep learning - Tag - Tianxin&#39;s Blog</title>
+        <link>https://imxtx.github.io/tags/deep-learning/</link>
+        <description>deep learning - Tag - Tianxin&#39;s Blog</description>
+        <generator>Hugo -- gohugo.io</generator><language>en</language><managingEditor>tianxin.xie[at]outlook.com (tianxin)</managingEditor>
+            <webMaster>tianxin.xie[at]outlook.com (tianxin)</webMaster><lastBuildDate>Mon, 14 Mar 2022 00:00:00 &#43;0000</lastBuildDate><atom:link href="https://imxtx.github.io/tags/deep-learning/" rel="self" type="application/rss+xml" /><item>
+    <title>论文阅读：PGD Attack</title>
+    <link>https://imxtx.github.io/2022/03/pgd_attack/</link>
+    <pubDate>Mon, 14 Mar 2022 00:00:00 &#43;0000</pubDate><author>
+        <name>tianxin</name>
+    </author><guid>https://imxtx.github.io/2022/03/pgd_attack/</guid>
+    <description><![CDATA[<p>本文介绍对抗攻击与防御方向的重要里程碑：PGD Attack。</p>]]></description>
+</item></channel>
+</rss>

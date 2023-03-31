@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="robots" content="noodp" />
+    <title>论文阅读：PGD Attack - Tianxin&#39;s Blog</title><meta name="Description" content="Tianxin&#39;s Blog, computer vision, deeplearning, pytorch, programming"><meta property="og:title" content="论文阅读：PGD Attack" />
+<meta property="og:description" content="本文介绍对抗攻击与防御方向的重要里程碑：PGD Attack。" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://imxtx.github.io/2022/03/pgd_attack/" /><meta property="og:image" content="https://imxtx.github.io/logo.png"/><meta property="article:section" content="posts" />
+<meta property="article:published_time" content="2022-03-14T00:00:00+00:00" />
+<meta property="article:modified_time" content="2022-03-14T00:00:00+00:00" /><meta property="og:site_name" content="Tianxin&#39;s Blog" />
+<meta name="twitter:card" content="summary_large_image"/>
+<meta name="twitter:image" content="https://imxtx.github.io/logo.png"/>
+
+<meta name="twitter:title" content="论文阅读：PGD Attack"/>
+<meta name="twitter:description" content="本文介绍对抗攻击与防御方向的重要里程碑：PGD Attack。"/>
+<meta name="application-name" content="Tianxin&#39;s Blog">
+<meta name="apple-mobile-web-app-title" content="Tianxin&#39;s Blog">
+
+<meta name="theme-color" content="#f8f8f8"><meta name="msapplication-TileColor" content="#da532c"><link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
+        <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+        <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><link rel="canonical" href="https://imxtx.github.io/2022/03/pgd_attack/" /><link rel="prev" href="https://imxtx.github.io/2021/08/unet/" /><link rel="stylesheet" href="/lib/normalize/normalize.min.css"><link rel="stylesheet" href="/css/color.css"><link rel="stylesheet" href="/css/style.min.css"><link rel="preload" as="style" onload="this.onload=null;this.rel='stylesheet'" href="/lib/fontawesome-free/all.min.css">
+        <noscript><link rel="stylesheet" href="/lib/fontawesome-free/all.min.css"></noscript><link rel="preload" as="style" onload="this.onload=null;this.rel='stylesheet'" href="/lib/animate/animate.min.css">
+        <noscript><link rel="stylesheet" href="/lib/animate/animate.min.css"></noscript><script type="application/ld+json">
+    {
+        "@context": "http://schema.org",
+        "@type": "BlogPosting",
+        "headline": "论文阅读：PGD Attack",
+        "inLanguage": "en",
+        "mainEntityOfPage": {
+            "@type": "WebPage",
+            "@id": "https:\/\/imxtx.github.io\/2022\/03\/pgd_attack\/"
+        },"genre": "posts","keywords": "deep learning, attack, robustness, defense","wordcount":  4128 ,
+        "url": "https:\/\/imxtx.github.io\/2022\/03\/pgd_attack\/","datePublished": "2022-03-14T00:00:00+00:00","dateModified": "2022-03-14T00:00:00+00:00","publisher": {
+            "@type": "Organization",
+            "name": ""},"author": {
+                "@type": "Person",
+                "name": "tianxin"
+            },"description": ""
+    }
+    </script><script src="//instant.page/5.1.1" defer type="module" integrity="sha384-MWfCL6g1OTGsbSwfuMHc8+8J2u71/LA8dzlIN3ycajckxuZZmF+DNjdm7O6H3PSq"></script>
+</head>
+
+<body header-desktop="fixed" header-mobile="auto"><script type="text/javascript">
+        function setTheme(theme) {document.body.setAttribute('theme', theme); document.documentElement.style.setProperty('color-scheme', theme === 'light' ? 'light' : 'dark');}
+        function saveTheme(theme) {window.localStorage && localStorage.setItem('theme', theme);}
+        function getMeta(metaName) {const metas = document.getElementsByTagName('meta'); for (let i = 0; i < metas.length; i++) if (metas[i].getAttribute('name') === metaName) return metas[i]; return '';}
+        if (window.localStorage && localStorage.getItem('theme')) {let theme = localStorage.getItem('theme');theme === 'light' || theme === 'dark' || theme === 'black' ? setTheme(theme) : (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? setTheme('dark') : setTheme('light')); } else { if ('auto' === 'light' || 'auto' === 'dark' || 'auto' === 'black') setTheme('auto'), saveTheme('auto'); else saveTheme('auto'), window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? setTheme('dark') : setTheme('light');}
+        let metaColors = {'light': '#f8f8f8','dark': '#252627','black': '#000000'}
+        getMeta('theme-color').content = metaColors[document.body.getAttribute('theme')];
+    </script>
+    <div id="back-to-top"></div>
+    <div id="mask"></div><div class="wrapper"><header class="desktop" id="header-desktop">
+    <div class="header-wrapper">
+        <div class="header-title">
+            <a href="/" title="Tianxin&#39;s Blog">Tianxin&#39;s Blog</a>
+        </div>
+        <div class="menu">
+            <div class="menu-inner"><a class="menu-item" href="/posts/"> Posts </a><a class="menu-item" href="/tags/"> Tags </a><a class="menu-item" href="/categories/"> Categories </a><a class="menu-item" href="/about/"> About </a><span class="menu-item delimiter"></span><span class="menu-item search" id="search-desktop">
+                        <input type="text" placeholder="Search titles or contents..." id="search-input-desktop">
+                        <a href="#" class="search-button search-toggle" id="search-toggle-desktop" title="Search">
+                            <i class="fas fa-search fa-fw"></i>
+                        </a>
+                        <a href="#" class="search-button search-clear" id="search-clear-desktop" title="Clear">
+                            <i class="fas fa-times-circle fa-fw"></i>
+                        </a>
+                        <span class="search-button search-loading" id="search-loading-desktop">
+                            <i class="fas fa-spinner fa-fw fa-spin"></i>
+                        </span>
+                    </span><a href="#" class="menu-item theme-switch" title="Switch Theme">
+                    <i class="fas fa-adjust fa-fw"></i>
+                </a></div>
+        </div>
+    </div>
+</header><header class="mobile" id="header-mobile">
+    <div class="header-container">
+        <div class="header-wrapper">
+            <div class="header-title">
+                <a href="/" title="Tianxin&#39;s Blog">Tianxin&#39;s Blog</a>
+            </div>
+            <div class="menu-toggle" id="menu-toggle-mobile">
+                <span></span><span></span><span></span>
+            </div>
+        </div>
+        <div class="menu" id="menu-mobile"><div class="search-wrapper">
+                    <div class="search mobile" id="search-mobile">
+                        <input type="text" placeholder="Search titles or contents..." id="search-input-mobile">
+                        <a href="#" class="search-button search-toggle" id="search-toggle-mobile" title="Search">
+                            <i class="fas fa-search fa-fw"></i>
+                        </a>
+                        <a href="#" class="search-button search-clear" id="search-clear-mobile" title="Clear">
+                            <i class="fas fa-times-circle fa-fw"></i>
+                        </a>
+                        <span class="search-button search-loading" id="search-loading-mobile">
+                            <i class="fas fa-spinner fa-fw fa-spin"></i>
+                        </span>
+                    </div>
+                    <a href="#" class="search-cancel" id="search-cancel-mobile">
+                        Cancel
+                    </a>
+                </div><a class="menu-item" href="/posts/" title="">Posts</a><a class="menu-item" href="/tags/" title="">Tags</a><a class="menu-item" href="/categories/" title="">Categories</a><a class="menu-item" href="/about/" title="">About</a><a href="#" class="menu-item theme-switch" title="Switch Theme">
+                <i class="fas fa-adjust fa-fw"></i>
+            </a></div>
+    </div>
+</header>
+<div class="search-dropdown desktop">
+    <div id="search-dropdown-desktop"></div>
+</div>
+<div class="search-dropdown mobile">
+    <div id="search-dropdown-mobile"></div>
+</div>
+<main class="main">
+            <div class="container"><div class="toc" id="toc-auto">
+        <h2 class="toc-title">Contents</h2>
+        <div class="toc-content" id="toc-content-auto"><nav id="TableOfContents">
+  <ul>
+    <li><a href="#研究动机和问题定义">研究动机和问题定义</a></li>
+    <li><a href="#统一看待攻击和防御">统一看待攻击和防御</a></li>
+    <li><a href="#对抗样本的分布特征">对抗样本的分布特征</a></li>
+    <li><a href="#网络容量和对抗鲁棒性的关系">网络容量和对抗鲁棒性的关系</a></li>
+    <li><a href="#实验训练鲁棒的网络">实验：训练鲁棒的网络</a>
+      <ul>
+        <li><a href="#mnist-上的结果">MNIST 上的结果</a></li>
+        <li><a href="#cifar10-上的结果">CIFAR10 上的结果</a></li>
+        <li><a href="#不同的攻击强度">不同的攻击强度</a></li>
+      </ul>
+    </li>
+    <li><a href="#总结">总结</a></li>
+    <li><a href="#参考">参考</a></li>
+  </ul>
+</nav></div>
+    </div><script>document.getElementsByTagName("main")[0].setAttribute("pageStyle", "normal")</script><script>document.getElementsByTagName("main")[0].setAttribute("autoTOC", "true")</script><article class="page single"><h1 class="single-title animate__animated animate__flipInX">论文阅读：PGD Attack</h1><div class="post-meta">
+            <div class="post-meta-line">
+                <span class="post-author"><i class="author fas fa-user-circle fa-fw"></i><a href="/about" title="Author" rel=" author" class="author">tianxin</a>
+                </span>&nbsp;<span class="post-category">included in </span>&nbsp;<span class="post-category">category <a href="/categories/%E5%AF%B9%E6%8A%97%E6%94%BB%E5%87%BB%E4%B8%8E%E9%98%B2%E5%BE%A1/"><i class="far fa-folder fa-fw"></i>对抗攻击与防御</a></span></div>
+            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2022-03-14">Posted on 2022-03-14</time>&nbsp;
+                <i class="fas fa-pencil-alt fa-fw"></i>&nbsp;4128 words&nbsp;
+                <i class="far fa-clock fa-fw"></i>&nbsp;9 minutes&nbsp;</div>
+        </div><div class="details toc" id="toc-static"  kept="">
+                <div class="details-summary toc-title">
+                    <span>Contents</span>
+                    <span><i class="details-icon fas fa-angle-right"></i></span>
+                </div>
+                <div class="details-content toc-content" id="toc-content-static"><nav id="TableOfContents">
+  <ul>
+    <li><a href="#研究动机和问题定义">研究动机和问题定义</a></li>
+    <li><a href="#统一看待攻击和防御">统一看待攻击和防御</a></li>
+    <li><a href="#对抗样本的分布特征">对抗样本的分布特征</a></li>
+    <li><a href="#网络容量和对抗鲁棒性的关系">网络容量和对抗鲁棒性的关系</a></li>
+    <li><a href="#实验训练鲁棒的网络">实验：训练鲁棒的网络</a>
+      <ul>
+        <li><a href="#mnist-上的结果">MNIST 上的结果</a></li>
+        <li><a href="#cifar10-上的结果">CIFAR10 上的结果</a></li>
+        <li><a href="#不同的攻击强度">不同的攻击强度</a></li>
+      </ul>
+    </li>
+    <li><a href="#总结">总结</a></li>
+    <li><a href="#参考">参考</a></li>
+  </ul>
+</nav></div>
+            </div><div class="content" id="content"><p>本文介绍对抗攻击与防御方向的重要里程碑：PGD Attack。</p>
+<p>论文标题与链接：<a href="https://arxiv.org/abs/1706.06083" target="_blank" rel="noopener noreferrer">Towards Deep Learning Models Resistant to Adversarial Attacks</a></p>
+<h2 id="研究动机和问题定义" class="headerLink">
+    <a href="#%e7%a0%94%e7%a9%b6%e5%8a%a8%e6%9c%ba%e5%92%8c%e9%97%ae%e9%a2%98%e5%ae%9a%e4%b9%89" class="header-mark"></a>研究动机和问题定义</h2><p>这篇论文主要从优化的角度来分析模型的对抗鲁棒性，作者首先考虑一个不失一般性的分类问题：输入 $x \in \mathbb{R}^d$ 和对应的标签 $ y \in [k]$ 源自分布 $\mathcal{D}$，损失函数定义为 $L(\theta,x,y)$，其中 $\theta \in \mathbb{R}^p$ 是模型的参数，我们的目标是寻找使得经验风险 $\mathbb{E}_{(x,y) \sim \mathcal{D}} \left[L(\theta,x,y)\right]$ 最小化的模型的参数 $\theta$。</p>
+<p>作者认为虽然经验风险最小化 (ERM)，如梯度下降，是比较成功的优化方法，但 ERM 通常不能生成鲁棒性较强的模型，很容易被对抗样本攻击。因此，我们需要将一般的 ERM 范式进行合适的增强，以提升模型抵御对抗样本的能力。作者的目标是给出<strong>对抗鲁棒模型</strong>（adversarially robust model）应该满足的一个具体的条件，然后再设计一种训练方法，使模型能够达到这个条件。简单来说就是作者规定了对抗鲁棒的模型应该满足什么要求，应该能够防御什么强度的攻击，然后提出了一种能够训练出满足这种要求的模型的训练方法。下面详细介绍。</p>
+<p>作者提出，对于每个样本点 $x$，允许的扰动集合为 $\mathcal{S} \subseteq \mathbb{R}^d$。在图像分类任务中选择 $\mathcal{S}$ 作为扰动集合能够捕捉图像之间的相似性。例如下图中，使用 FGSM 方法在输入 $x$ 上添加扰动，这个扰动还是属于输入空间的。如果扰动很强，那么从人的感官来看，生成的图像和原图的差距就可能会变得很大。</p>
+<figure><img src="adversarial_example.png"
+         alt="图1：对抗扰动的例子"/><figcaption>
+            <p>图1：对抗扰动的例子</p>
+        </figcaption>
+</figure>
+
+<p>因此，作者在这篇文章中考虑 $\ell_\infty$ 约束的扰动，也就是考虑无穷范数约束下的对抗鲁棒性问题，即扰动 $\delta$ 的无穷范数小于等于某个阈值 $\epsilon$。因此可以修改 ERM 的优化目标，允许在训练时给原始样本 $x$ 添加对抗扰动 $\delta$，新的优化目标如下：</p>
+<p>$$
+\min_{\theta}\rho(\theta), \quad\text{where}\quad\rho(\theta) = \mathbb{E}_{(x,y)\sim\mathcal{D}}\left[\max_{\delta\in\mathcal{S}} L(\theta,x+\delta,y)\right] \quad \text{w.r.t.} \quad \Vert\delta\Vert_\infty \le \epsilon \tag{1}
+$$</p>
+<p>这个公式的直观理解就是通过训练使模型能够抵御 $\ell_\infty$ 约束下扰动范围内最强的攻击。作者首先找到使分类器误差最大的对抗样本（方括号内部），然后用该对抗样本作为输入，训练模型的参数 $\theta$（方括号外部），这样模型就可以有效抵御强度在 $\ell_\infty$ 约束内的扰动。下图来自于这篇<a href="https://towardsdatascience.com/know-your-enemy-7f7c5038bdf3" target="_blank" rel="noopener noreferrer">博客</a>，是 $\ell_2$ （欧几里得范数）约束下找到最大 loss 对抗样本的示意图。</p>
+<figure><img src="pgd_loss.png"
+         alt="图2：$\ell_2$ 约束下带重启的 PGD，第二次迭代找到了 loss 最大的对抗样本" width="400"/><figcaption>
+            <p>图2：$\ell_2$ 约束下带重启的 PGD，第二次迭代找到了 loss 最大的对抗样本</p>
+        </figcaption>
+</figure>
+
+<h2 id="统一看待攻击和防御" class="headerLink">
+    <a href="#%e7%bb%9f%e4%b8%80%e7%9c%8b%e5%be%85%e6%94%bb%e5%87%bb%e5%92%8c%e9%98%b2%e5%be%a1" class="header-mark"></a>统一看待攻击和防御</h2><p>之前的工作主要关注两个问题：</p>
+<ol>
+<li>如果产生很强的对抗本，例如只需很小的扰动，就能使模型给出高置信度的误判？</li>
+<li>如何训练模型才能使模型完全不被对抗样本攻击，或者说很难生成有效的对抗本？</li>
+</ol>
+<p>公式 (1) 给出了上述两个问题的答案，从攻击的角度看，有 FGSM 及其变种等攻击方法。FGSM 属于 $\ell_\infty$ 约束下的攻击，其构造攻击样本 $\tilde{x}$ 的方法如下：</p>
+<p>$$
+\tilde{x} = x + \epsilon \text{sgn} \left( \nabla_x L(\theta,x,y) \right)
+$$</p>
+<p>我们可以认为这是一种单步 (one-step) 的攻击，单步攻击要找到公式 (1) 中方括号内部所想要的 loss 最大的对抗样本明显是比较困难的。因此我们可以使用多步的 PGD(Projected Gradient Descent) 攻击：</p>
+<p>$$
+x^{t+1} = \Pi_{x+\mathcal{S}} \left(x^t + \alpha \text{sgn} \left( \nabla_x L(\theta,x,y)\right) \right) \tag{2}
+$$</p>
+<p>公式 (2) 中的 $\Pi$ 表示将对抗样本投射回 $\ell_\infty$ 允许的范围内，即 $x+\mathcal{S}$ 内，什么是投影梯度下降可以看下图：</p>
+<figure><img src="projected_gradient_descent.png"
+         alt="投影梯度下降 (Projected Gradient Descent)" width="400"/><figcaption>
+            <p>投影梯度下降 (Projected Gradient Descent)</p>
+        </figcaption>
+</figure>
+
+<p>具体的投影函数如下：</p>
+<p>$$
+\Pi_{\mathcal{X}} = \min_{z\in\mathcal{X}} \Vert x - z \Vert \tag{3}
+$$</p>
+<p>公式 (3) 的意思是从 $\mathcal{X}$ 中找到一个 $z$ 使得 $x$ 到 $z$ 的距离最小，那么这个 $z$ 就是投影的结果，即图中的 $x^{(k+1)}$。类似 FGSM 的各种方法其实都是在尝试解决公式 (1) 方括号内部所定义的问题，即找一个最强的攻击样本。另一方面，从防御的角度来看，我们可以将所有的训练样本 $x$ 都替换为扰动后的处在 $\ell_p$ 超球体内使模型 loss 最大的样本，这样在优化模型参数之后，理论上模型能够防御任何位于样本 $x$ 的 $\ell_p$ 超球体内的对抗样本。</p>
+<h2 id="对抗样本的分布特征" class="headerLink">
+    <a href="#%e5%af%b9%e6%8a%97%e6%a0%b7%e6%9c%ac%e7%9a%84%e5%88%86%e5%b8%83%e7%89%b9%e5%be%81" class="header-mark"></a>对抗样本的分布特征</h2><p>理想是好的，但是现在还没有好的方法能够确保找到使公式 (1) 中 loss 最大的对抗样本，因为要找一个 loss 最大的样本点就要求我们去最大化一个非凹的函数，而且这个函数里面有很多局部最大值，所以是个比较棘手的问题。虽然可以在样本 $x$ 的 $\ell_p$ 超球体内暴力搜索，但是有点不切实际。怎么找？能否找得到？如果暴力搜索那么什么时候停止？</p>
+<p>为此，作者在 MNIST 和 CIFAR10 数据集上做了大量实验，实验的方法也很简单：使用 PGD 不断迭代尝试寻找 $\ell_\infty$ 约束下使 loss 最大的对抗样本，而且每当 loss 收敛不再增长后，就重新选一个随机的起始点，再次进行 PGD，其实也就是暴力搜索。</p>
+<p>作者通过实验发现，虽然有很多局部极大值点分布在空间 $x_i + \mathcal{S}$ 内，但是总体来看，模型的损失是比较集中的，而且上升也比较稳定。因此作者认为，虽然不能完全去解决公式 (1) 代表的优化问题，但是还是有迹可循的，作者列出了以下几个发现：</p>
+<ol>
+<li>
+<p>当对 $x + \mathcal{S}$ 内随机选择的起始点进行 $\ell_\infty$ 投影梯度下降时，对抗样本获得的损失以相当一致的方式增加，并迅速达达到一个比较平缓的程度，如下图所示：
+<figure><img src="figure1.png"
+             alt="图3：不同训练方式的损失变化"/><figcaption>
+                <p>图3：不同训练方式的损失变化</p>
+            </figcaption>
+    </figure>
+
+图中显示了 20 次投影梯度下降 (PGD) 过程中损失的变化情况。每次运行都从 $\ell_\infty$ 球中均匀采样随机点开始。经过少量迭代后，对抗损失趋于平稳，优化轨迹和最终损失值也相当集中，特别是在 CIFAR10 上。此外，经过对抗训练的网络上的最终损失值明显小于普通训练的网络。</p>
+</li>
+<li>
+<p>通过进一步实验，作者发现，虽然进行了很多次（$10^5$）PGD 重启（随机均匀采样起始点），loss 的分布还是非常集中稳定的，而且没有离群点，如下图所示：
+<figure><img src="figure2.png"
+             alt="图4：5个测试集中的样本点，红色表示经过对抗训练的模型上的损失，蓝色表示普通模型上的损失"/><figcaption>
+                <p>图4：5个测试集中的样本点，红色表示经过对抗训练的模型上的损失，蓝色表示普通模型上的损失</p>
+            </figcaption>
+    </figure>
+
+从经验上来看，极大值的分布还是比较稳定的。经过对抗训练的网络损失明显较小，并且最终的损失值非常集中，没有任何异常值。</p>
+</li>
+<li>
+<p>作者为了证明这些极大值是显著不同的，还测量了他们所有成对之间的 $L_2$ 距离和角度，并观察到距离的分布接近于 $\ell_\infty$ 球中两个随机点之间的期望距离，并且角度接近 90°。沿局部极大值之间的线段，损失函数是凸的，在端点处达到最大值，并在中间有常数因子的减少。然而，对于整个线段，损失要比随机点的损失高得多。</p>
+</li>
+<li>
+<p>还观察到对抗扰动与样本的梯度的内积为负（夹角为钝角，这个很好理解，因为是在做梯度上升），并且随着扰动强度的增加，扰动与样本梯度方向的总体相关性逐渐下降。</p>
+</li>
+</ol>
+<p>作者声称，所有这些证据都表明 PGD 是一阶方法中一种比较通用的攻击方法，如果一个模型能够抵御 PGD 攻击，那么就能防御所有一阶攻击方法。其实从图 4 中可以看出，大量随机采样的极大值点的分布是比较集中的，说明很难再去找到一个具有更大值的极大值点，但不保证一定没有，所以这个地方还存在不确定性，只能说是一种实验性的结果。</p>
+<blockquote>
+<p>一阶 (first-order) 指的是利用一阶导数，如计算 loss 关于输入的梯度。</p>
+</blockquote>
+<p>前面已经分析了 PGD 为什么能够找到 $\ell_\infty$ 约束下最强的扰动，那么要训练一个强鲁棒性的模型也很简单，前面也提到过，那就是用 PGD 找到的强对抗样本来进行对抗训练，如图 5 所示。</p>
+<figure><img src="figure5.png"
+         alt="图5：在 MNIST 和 CIFAR10 上使用 PGD 方法进行对抗训练，loss 持续下降，模型鲁棒性持续提升" width="600"/><figcaption>
+            <p>图5：在 MNIST 和 CIFAR10 上使用 PGD 方法进行对抗训练，loss 持续下降，模型鲁棒性持续提升</p>
+        </figcaption>
+</figure>
+
+<p>作者还利用 <a href="https://en.wikipedia.org/wiki/Danskin%27s_theorem" target="_blank" rel="noopener noreferrer">Danskin&rsquo;s theorem</a> 证明 PGD 给出的梯度方向是最好的（往最强对抗样本的方向），但是 Danskin&rsquo;s theorem 只能应用在连续可微函数上，实际上训练集只是分布 $\mathcal{D}$ 上的采样，所以只能算作不严格的理论支撑。</p>
+<h2 id="网络容量和对抗鲁棒性的关系" class="headerLink">
+    <a href="#%e7%bd%91%e7%bb%9c%e5%ae%b9%e9%87%8f%e5%92%8c%e5%af%b9%e6%8a%97%e9%b2%81%e6%a3%92%e6%80%a7%e7%9a%84%e5%85%b3%e7%b3%bb" class="header-mark"></a>网络容量和对抗鲁棒性的关系</h2><p>网络的结构和容量其实和模型的对抗鲁棒性有很大的关系，下图左边是一个很简单的数据集，只需要一个简单的分类器。中间的五角星是 $\ell_\infty$ 约束下的对抗样本，那么分类器就会出错，所以需要右图红色的鲁棒性很强的分类器。</p>
+<figure><img src="decision_boundaries.png"
+         alt="图6：强鲁棒性需要强分类器"/><figcaption>
+            <p>图6：强鲁棒性需要强分类器</p>
+        </figcaption>
+</figure>
+
+<p>作者进一步对模型的大小和鲁棒性之间的关系做了实验。对于 MNIST 数据集，考虑一个简单的卷积网络，研究当将网络的规模扩大一倍（即 filter 的数量增加一倍，全连接层的大小增加一倍）时，它的鲁棒性将发生什么变化。初始的网络第一层是有 2 个 filter 的卷积层，接着是一层带有 4 个 filter 的卷积层，卷积层之后是 2 × 2 max-pooling层，然后一个有 64 个神经元的全连接层。取 $\epsilon = 0.3$ 作为对抗样本的最大强度。对于 CIFAR10 数据集，使用 ResNet 模型，并使用了随机 crop 和 flip 进行数据增强，另外还对单张图像做了 <a href="https://datascience.stackexchange.com/a/94546" target="_blank" rel="noopener noreferrer">standardization</a>。为了增加容量，作者将网络宽度变成了原来的 10 倍，总共五个残差块，每个 residual block 有 (16, 160, 320, 640) 个 filter。该网络在使用自然样本训练时，准确率可以达到 95.2%，取 $\epsilon = 8$ 作为对抗样本的最大强度。图 7 展示了不同训练方法得到的模型准确率和模型容量的关系。</p>
+<figure><img src="figure7.png"
+         alt="图7：网络容量对网络性能的影响。在 MNIST 和 CIFAR10 上对不同容量的网络进行了训练：(a) 使用自然样本训练，(b) 使用 FGSM 生成的对抗样本，(c) 使用 PGD 生成的对抗样本，(d) 损失变化。"/><figcaption>
+            <p>图7：网络容量对网络性能的影响。在 MNIST 和 CIFAR10 上对不同容量的网络进行了训练：(a) 使用自然样本训练，(b) 使用 FGSM 生成的对抗样本，(c) 使用 PGD 生成的对抗样本，(d) 损失变化。</p>
+        </figcaption>
+</figure>
+
+<p>从上图可以看出：</p>
+<ol>
+<li>容量越大的模型越容易进行对抗训练，网络容量和PGD 的平均 loss 成反比（第四列）。</li>
+<li>FGSM 训练的网络只对 FGSM 生成的对抗样本有鲁棒性，对 PGD 生成的对抗样本基本没有鲁棒性（第二列）。</li>
+<li>PGD 训练的网络鲁棒性较强，能防御对 FGSM 生成的对抗样本（第三列）。</li>
+<li>从第三列图可以看出，capacity 比较小的时候，使用 PGD 训练，网络学不到有用的知识，准确率很低。一个解释是网络把自己的 capacity 都拿去应对 PGD 生成的对抗样本了，因此没有更多的参数可以去拟合要学习的映射关系。</li>
+</ol>
+<p>另外，作者发现模型的容量越大，在该模型上生成的对抗样本的迁移性就越差，原文附录 B 有详细介绍。</p>
+<h2 id="实验训练鲁棒的网络" class="headerLink">
+    <a href="#%e5%ae%9e%e9%aa%8c%e8%ae%ad%e7%bb%83%e9%b2%81%e6%a3%92%e7%9a%84%e7%bd%91%e7%bb%9c" class="header-mark"></a>实验：训练鲁棒的网络</h2><p>作者使用 PGD 在 MNIST 和 CIFAR10 上进行了实验，使用 PGD 生成的对抗样本对要攻击的模型进行对抗训练，然后评估其鲁棒性。具体的实验设置这里就不赘述了，可以看原文。</p>
+<h3 id="mnist-上的结果" class="headerLink">
+    <a href="#mnist-%e4%b8%8a%e7%9a%84%e7%bb%93%e6%9e%9c" class="header-mark"></a>MNIST 上的结果</h3><p>表 1 中的 Source 表示不同的代理模型，都是攻击经过对抗训练的模型 A。A 表示白盒攻击，A&rsquo; 和 B 表示黑盒攻击。可以看到黑盒攻击下，经过对抗训练的模型也有很高的准确率。</p>
+<figure><img src="table1.png"/>
+</figure>
+
+<h3 id="cifar10-上的结果" class="headerLink">
+    <a href="#cifar10-%e4%b8%8a%e7%9a%84%e7%bb%93%e6%9e%9c" class="header-mark"></a>CIFAR10 上的结果</h3><p>从表 2 中可以看出，即便进行了对抗训练，使用更强的扰动，$\epsilon=8$，黑盒白盒都可以使模型的性能有很大的下降。</p>
+<figure><img src="table2.png"/>
+</figure>
+
+<h3 id="不同的攻击强度" class="headerLink">
+    <a href="#%e4%b8%8d%e5%90%8c%e7%9a%84%e6%94%bb%e5%87%bb%e5%bc%ba%e5%ba%a6" class="header-mark"></a>不同的攻击强度</h3><p>从下图 (a) 和 (b) 可以看出，经过 $\ell_\infty$ PGD 和 <a href="https://arxiv.org/abs/1712.04248" target="_blank" rel="noopener noreferrer">DBA</a> 对抗训练的模型，对 $\ell_\infty$ 攻击都很鲁棒，但是经过 $\ell_\infty$ PGD 对抗训练的模型对  $\ell_2$ 攻击有一定的鲁棒性， 而 DBA 对抗训练的模型鲁棒性则很差。图 (c) 和 (d) 也表明了经过 $\ell_\infty$ PGD对抗训练的模型对  $\ell_2$ 攻击也很鲁棒。证明了使用 PGD 对抗训练的模型有较强的鲁棒性。</p>
+<figure><img src="figure8.png"/>
+</figure>
+
+<h2 id="总结" class="headerLink">
+    <a href="#%e6%80%bb%e7%bb%93" class="header-mark"></a>总结</h2><p>这篇文章比较深入地分析了 $\ell_\infty$ 约束下的对抗攻击，并提出了防止 $\ell_\infty$ 攻击的 PGD 对抗训练方法。文章特别对公式 (1) 方括号内部的优化问题进行了详细的讨论，发现了在某个样本 $x$ 的 $\ell_\infty$ 超球体内局部极大值的分布是比较集中的 (参考图4)，虽然很难严格证明，但是使用 PGD 对抗训练提升模型鲁棒性是一种较为可行的方法。</p>
+<h2 id="参考" class="headerLink">
+    <a href="#%e5%8f%82%e8%80%83" class="header-mark"></a>参考</h2><ol>
+<li><a href="https://towardsdatascience.com/know-your-enemy-7f7c5038bdf3" target="_blank" rel="noopener noreferrer">https://towardsdatascience.com/know-your-enemy-7f7c5038bdf3</a></li>
+<li><a href="https://www.quora.com/What-does-projected-mean-in-projected-stochastic-gradient-descent" target="_blank" rel="noopener noreferrer">https://www.quora.com/What-does-projected-mean-in-projected-stochastic-gradient-descent</a></li>
+</ol></div>
+
+        <div class="post-footer" id="post-footer">
+    <div class="post-info">
+        <div class="post-info-line">
+            <div class="post-info-mod">
+                <span>Updated on 2022-03-14</span>
+            </div>
+            <div class="post-info-license"></div>
+            <div class="post-info-share">
+                <span><a href="#" title="Share on Twitter" data-sharer="twitter" data-url="https://imxtx.github.io/2022/03/pgd_attack/" data-title="论文阅读：PGD Attack" data-via="@imxietx" data-hashtags="deep learning,attack,robustness,defense"><i class="fab fa-twitter fa-fw"></i></a><a href="#" title="Share on Facebook" data-sharer="facebook" data-url="https://imxtx.github.io/2022/03/pgd_attack/" data-hashtag="deep learning"><i class="fab fa-facebook-square fa-fw"></i></a><a href="#" title="Share on Reddit" data-sharer="reddit" data-url="https://imxtx.github.io/2022/03/pgd_attack/"><i class="fab fa-reddit fa-fw"></i></a><a href="#" title="Share on 微博" data-sharer="weibo" data-url="https://imxtx.github.io/2022/03/pgd_attack/" data-title="论文阅读：PGD Attack"><i class="fab fa-weibo fa-fw"></i></a></span>
+            </div>
+        </div>
+        <div class="post-info-line">
+            <div class="post-info-md"></div>
+            
+        </div>
+    </div>
+
+    <div class="post-info-more">
+        <section class="post-tags"><i class="fas fa-tags fa-fw"></i>&nbsp;<a href="/tags/deep-learning/">deep learning</a>,&nbsp;<a href="/tags/attack/">attack</a>,&nbsp;<a href="/tags/robustness/">robustness</a>,&nbsp;<a href="/tags/defense/">defense</a></section>
+        <section>
+            <span><a href="javascript:void(0);" onclick="window.history.back();">Back</a></span>&nbsp;|&nbsp;<span><a href="/">Home</a></span>
+        </section>
+    </div>
+
+    <div class="post-nav"><a href="/2021/08/unet/" class="prev" rel="prev" title="U-Net 源码解读"><i class="fas fa-angle-left fa-fw"></i>U-Net 源码解读</a></div>
+</div>
+</article></div>
+        </main><footer class="footer">
+        <div class="footer-container"><div class="footer-line">
+                    Powered by <a href="https://gohugo.io/" target="_blank" rel="noopener noreferrer" title="Hugo 0.111.3">Hugo</a>&nbsp;|&nbsp;Theme - <a href="https://github.com/HEIGE-PCloud/DoIt" target="_blank" rel="noopener noreferrer" title="DoIt 0.3.0"><i class="far fa-edit fa-fw"></i> DoIt</a>
+                </div><div class="footer-line"><i class="far fa-copyright fa-fw"></i><span itemprop="copyrightYear">2023</span><span class="author" itemprop="copyrightHolder">&nbsp;<a href="/about" target="_blank" rel="noopener noreferrer">tianxin</a></span>&nbsp;|&nbsp;<span class="license"><a rel="license external nofollow noopener noreffer" href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank">CC BY-NC 4.0</a></span></div>
+            <div class="footer-line"></div>
+            <div class="footer-line">
+            </div>
+        </div></footer></div>
+
+    <div id="fixed-buttons"><a href="#back-to-top" id="back-to-top-button" class="fixed-button" title="Back to Top">
+            <i class="fas fa-arrow-up fa-fw"></i>
+        </a><a href="#" id="view-comments" class="fixed-button" title="View Comments">
+            <i class="fas fa-comment fa-fw"></i>
+        </a>
+    </div><div id="cookieconsent-container"></div><div class="assets"><link rel="stylesheet" href="/lib/katex/katex.min.css"><link rel="preload" as="style" onload="this.onload=null;this.rel='stylesheet'" href="/lib/katex/copy-tex.min.css">
+        <noscript><link rel="stylesheet" href="/lib/katex/copy-tex.min.css"></noscript><link rel="stylesheet" href="/lib/cookieconsent/cookieconsent.min.css"><script type="text/javascript">window.config={"code":{"copyTitle":"Copy to clipboard","maxShownLines":50},"comment":{},"cookieconsent":{"content":{"dismiss":"Got it!","link":"Learn more","message":"This website uses Cookies to improve your experience."},"enable":true,"palette":{"button":{"background":"#f0f0f0"},"popup":{"background":"#1aa3ff"}},"theme":"edgeless"},"math":{"delimiters":[{"display":true,"left":"$$","right":"$$"},{"display":true,"left":"\\[","right":"\\]"},{"display":false,"left":"$","right":"$"},{"display":false,"left":"\\(","right":"\\)"}],"strict":false},"search":{"distance":null,"findAllMatches":null,"fuseIndexURL":"/index.json","highlightTag":"em","ignoreFieldNorm":null,"ignoreLocation":null,"isCaseSensitive":null,"location":null,"maxResultLength":10,"minMatchCharLength":null,"noResultsFound":"No results found","snippetLength":50,"threshold":null,"type":"fuse","useExtendedSearch":null},"sharerjs":true};</script><script type="text/javascript" src="/lib/clipboard/clipboard.min.js"></script><script type="text/javascript" src="/lib/sharer/sharer.min.js"></script><script type="text/javascript" src="/lib/katex/katex.min.js" defer></script><script type="text/javascript" src="/lib/katex/auto-render.min.js" defer></script><script type="text/javascript" src="/lib/katex/copy-tex.min.js" defer></script><script type="text/javascript" src="/lib/katex/mhchem.min.js" defer></script><script type="text/javascript" src="/js/katex.min.js" defer></script><script type="text/javascript" src="/lib/cookieconsent/cookieconsent.min.js" defer></script><script type="text/javascript" src="/js/cookieconsent.min.js" defer></script><script type="text/javascript" src="/js/theme.min.js" defer></script></div>
+</body>
+
+</html>
