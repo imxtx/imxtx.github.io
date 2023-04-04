@@ -5,7 +5,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="robots" content="noodp" />
-    <title>论文阅读：PGD Attack - Tianxin&#39;s Blog</title><meta name="Description" content="Tianxin&#39;s Blog, computer vision, deeplearning, pytorch, programming"><meta property="og:title" content="论文阅读：PGD Attack" />
+    <title>对抗攻击系列：PGD Attack - Tianxin&#39;s Blog</title><meta name="Description" content="Tianxin&#39;s Blog, computer vision, deeplearning, pytorch, programming"><meta property="og:title" content="对抗攻击系列：PGD Attack" />
 <meta property="og:description" content="本文介绍对抗攻击与防御方向的重要里程碑：PGD Attack。" />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://imxtx.github.io/2022/03/pgd_attack/" /><meta property="og:image" content="https://imxtx.github.io/logo.png"/><meta property="article:section" content="posts" />
@@ -14,25 +14,25 @@
 <meta name="twitter:card" content="summary_large_image"/>
 <meta name="twitter:image" content="https://imxtx.github.io/logo.png"/>
 
-<meta name="twitter:title" content="论文阅读：PGD Attack"/>
+<meta name="twitter:title" content="对抗攻击系列：PGD Attack"/>
 <meta name="twitter:description" content="本文介绍对抗攻击与防御方向的重要里程碑：PGD Attack。"/>
 <meta name="application-name" content="Tianxin&#39;s Blog">
 <meta name="apple-mobile-web-app-title" content="Tianxin&#39;s Blog">
 
 <meta name="theme-color" content="#f8f8f8"><meta name="msapplication-TileColor" content="#da532c"><link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
         <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
-        <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><link rel="canonical" href="https://imxtx.github.io/2022/03/pgd_attack/" /><link rel="prev" href="https://imxtx.github.io/2021/08/unet/" /><link rel="stylesheet" href="/lib/normalize/normalize.min.css"><link rel="stylesheet" href="/css/color.css"><link rel="stylesheet" href="/css/style.min.css"><link rel="preload" as="style" onload="this.onload=null;this.rel='stylesheet'" href="/lib/fontawesome-free/all.min.css">
+        <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><link rel="canonical" href="https://imxtx.github.io/2022/03/pgd_attack/" /><link rel="prev" href="https://imxtx.github.io/2022/03/fgsm/" /><link rel="stylesheet" href="/lib/normalize/normalize.min.css"><link rel="stylesheet" href="/css/color.css"><link rel="stylesheet" href="/css/style.min.css"><link rel="preload" as="style" onload="this.onload=null;this.rel='stylesheet'" href="/lib/fontawesome-free/all.min.css">
         <noscript><link rel="stylesheet" href="/lib/fontawesome-free/all.min.css"></noscript><link rel="preload" as="style" onload="this.onload=null;this.rel='stylesheet'" href="/lib/animate/animate.min.css">
         <noscript><link rel="stylesheet" href="/lib/animate/animate.min.css"></noscript><script type="application/ld+json">
     {
         "@context": "http://schema.org",
         "@type": "BlogPosting",
-        "headline": "论文阅读：PGD Attack",
+        "headline": "对抗攻击系列：PGD Attack",
         "inLanguage": "en",
         "mainEntityOfPage": {
             "@type": "WebPage",
             "@id": "https:\/\/imxtx.github.io\/2022\/03\/pgd_attack\/"
-        },"genre": "posts","keywords": "deep learning, attack, robustness, defense","wordcount":  4128 ,
+        },"genre": "posts","keywords": "adversarial attack, robustness","wordcount":  4128 ,
         "url": "https:\/\/imxtx.github.io\/2022\/03\/pgd_attack\/","datePublished": "2022-03-14T00:00:00+00:00","dateModified": "2022-03-14T00:00:00+00:00","publisher": {
             "@type": "Organization",
             "name": ""},"author": {
@@ -131,7 +131,7 @@
     <li><a href="#参考">参考</a></li>
   </ul>
 </nav></div>
-    </div><script>document.getElementsByTagName("main")[0].setAttribute("pageStyle", "normal")</script><script>document.getElementsByTagName("main")[0].setAttribute("autoTOC", "true")</script><article class="page single"><h1 class="single-title animate__animated animate__flipInX">论文阅读：PGD Attack</h1><div class="post-meta">
+    </div><script>document.getElementsByTagName("main")[0].setAttribute("pageStyle", "normal")</script><script>document.getElementsByTagName("main")[0].setAttribute("autoTOC", "true")</script><article class="page single"><h1 class="single-title animate__animated animate__flipInX">对抗攻击系列：PGD Attack</h1><div class="post-meta">
             <div class="post-meta-line">
                 <span class="post-author"><i class="author fas fa-user-circle fa-fw"></i><a href="/about" title="Author" rel=" author" class="author">tianxin</a>
                 </span>&nbsp;<span class="post-category">included in </span>&nbsp;<span class="post-category">category <a href="/categories/%E5%AF%B9%E6%8A%97%E6%94%BB%E5%87%BB%E4%B8%8E%E9%98%B2%E5%BE%A1/"><i class="far fa-folder fa-fw"></i>对抗攻击与防御</a></span></div>
@@ -309,7 +309,7 @@ $$</p>
             </div>
             <div class="post-info-license"></div>
             <div class="post-info-share">
-                <span><a href="#" title="Share on Twitter" data-sharer="twitter" data-url="https://imxtx.github.io/2022/03/pgd_attack/" data-title="论文阅读：PGD Attack" data-via="@imxietx" data-hashtags="deep learning,attack,robustness,defense"><i class="fab fa-twitter fa-fw"></i></a><a href="#" title="Share on Facebook" data-sharer="facebook" data-url="https://imxtx.github.io/2022/03/pgd_attack/" data-hashtag="deep learning"><i class="fab fa-facebook-square fa-fw"></i></a><a href="#" title="Share on Reddit" data-sharer="reddit" data-url="https://imxtx.github.io/2022/03/pgd_attack/"><i class="fab fa-reddit fa-fw"></i></a><a href="#" title="Share on 微博" data-sharer="weibo" data-url="https://imxtx.github.io/2022/03/pgd_attack/" data-title="论文阅读：PGD Attack"><i class="fab fa-weibo fa-fw"></i></a></span>
+                <span><a href="#" title="Share on Twitter" data-sharer="twitter" data-url="https://imxtx.github.io/2022/03/pgd_attack/" data-title="对抗攻击系列：PGD Attack" data-via="@imxietx" data-hashtags="adversarial attack,robustness"><i class="fab fa-twitter fa-fw"></i></a><a href="#" title="Share on Facebook" data-sharer="facebook" data-url="https://imxtx.github.io/2022/03/pgd_attack/" data-hashtag="adversarial attack"><i class="fab fa-facebook-square fa-fw"></i></a><a href="#" title="Share on Reddit" data-sharer="reddit" data-url="https://imxtx.github.io/2022/03/pgd_attack/"><i class="fab fa-reddit fa-fw"></i></a><a href="#" title="Share on 微博" data-sharer="weibo" data-url="https://imxtx.github.io/2022/03/pgd_attack/" data-title="对抗攻击系列：PGD Attack"><i class="fab fa-weibo fa-fw"></i></a></span>
             </div>
         </div>
         <div class="post-info-line">
@@ -319,13 +319,13 @@ $$</p>
     </div>
 
     <div class="post-info-more">
-        <section class="post-tags"><i class="fas fa-tags fa-fw"></i>&nbsp;<a href="/tags/deep-learning/">deep learning</a>,&nbsp;<a href="/tags/attack/">attack</a>,&nbsp;<a href="/tags/robustness/">robustness</a>,&nbsp;<a href="/tags/defense/">defense</a></section>
+        <section class="post-tags"><i class="fas fa-tags fa-fw"></i>&nbsp;<a href="/tags/adversarial-attack/">adversarial attack</a>,&nbsp;<a href="/tags/robustness/">robustness</a></section>
         <section>
             <span><a href="javascript:void(0);" onclick="window.history.back();">Back</a></span>&nbsp;|&nbsp;<span><a href="/">Home</a></span>
         </section>
     </div>
 
-    <div class="post-nav"><a href="/2021/08/unet/" class="prev" rel="prev" title="U-Net 源码解读"><i class="fas fa-angle-left fa-fw"></i>U-Net 源码解读</a></div>
+    <div class="post-nav"><a href="/2022/03/fgsm/" class="prev" rel="prev" title="对抗攻击系列：FGSM"><i class="fas fa-angle-left fa-fw"></i>对抗攻击系列：FGSM</a></div>
 </div>
 </article></div>
         </main><footer class="footer">

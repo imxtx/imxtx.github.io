@@ -1,12 +1,12 @@
 {
 	"version": 3,
 	"file": "mermaid.min.css",
-	"sourceRoot": "/Users/tianxin/Code/hugo/blogsite-hugo-project",
+	"sourceRoot": "E:/github/myblog-project",
 	"sources": [
 		"themes/DoIt/assets/lib/mermaid/mermaid.scss"
 	],
 	"sourcesContent": [
-		".mermaid svg {\n  visibility: visible;\n}\n.page .mermaid {\n  width: 100%;\n  margin: 3% auto;\n  text-align: center;\n\n  & > svg {\n    max-width: 100%;\n  }\n\n  // @import \"themes/neutral/index\";\n\n  // [theme=dark] & {\n  //   @import \"themes/dark/index\";\n  // }\n  // [theme=black] & {\n  //   @import \"themes/dark/index\";\n  // }\n\n  div.mermaidTooltip {\n    z-index: 50;\n  }\n}\n"
+		".mermaid svg {\r\n  visibility: visible;\r\n}\r\n.page .mermaid {\r\n  width: 100%;\r\n  margin: 3% auto;\r\n  text-align: center;\r\n\r\n  & > svg {\r\n    max-width: 100%;\r\n  }\r\n\r\n  // @import \"themes/neutral/index\";\r\n\r\n  // [theme=dark] & {\r\n  //   @import \"themes/dark/index\";\r\n  // }\r\n  // [theme=black] & {\r\n  //   @import \"themes/dark/index\";\r\n  // }\r\n\r\n  div.mermaidTooltip {\r\n    z-index: 50;\r\n  }\r\n}\r\n"
 	],
 	"names": [],
 	"mappings": "AAAA,AAAA,QAAQ,CAAC,GAAG,AAAC,CACX,UAAU,CAAE,OAAO,CACpB,AACD,AAAA,KAAK,CAAC,QAAQ,AAAC,CACb,KAAK,CAAE,IAAI,CACX,MAAM,CAAE,OAAO,CACf,UAAU,CAAE,MAAM,CAkBnB,AArBD,AAKE,KALG,CAAC,QAAQ,CAKR,GAAG,AAAC,CACN,SAAS,CAAE,IAAI,CAChB,AAPH,AAkBE,KAlBG,CAAC,QAAQ,CAkBZ,GAAG,AAAA,eAAe,AAAC,CACjB,OAAO,CAAE,EAAE,CACZ"
