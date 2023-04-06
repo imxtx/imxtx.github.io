@@ -21,6 +21,13 @@
     </author><guid>https://imxtx.github.io/2022/03/fgsm/</guid>
     <description><![CDATA[<p>本文介绍对抗攻击与防御方向最基础的攻击方法 Fast Gradient Sign Method。</p>]]></description>
 </item><item>
+    <title>可解释性深度学习：Class Activation Map (CAM)</title>
+    <link>https://imxtx.github.io/2021/10/cam/</link>
+    <pubDate>Fri, 01 Oct 2021 00:00:00 &#43;0000</pubDate><author>
+        <name>tianxin</name>
+    </author><guid>https://imxtx.github.io/2021/10/cam/</guid>
+    <description><![CDATA[<p>本文主要介绍可解释性深度学习方向的一个重要工作：Class Activation Map (CAM)。</p>]]></description>
+</item><item>
     <title>U-Net 源码解读</title>
     <link>https://imxtx.github.io/2021/08/unet/</link>
     <pubDate>Sun, 01 Aug 2021 00:00:00 &#43;0000</pubDate><author>

@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="robots" content="noodp" />
+    <title>可解释性深度学习：Class Activation Map (CAM) - Tianxin&#39;s Blog</title><meta name="Description" content="Tianxin&#39;s Blog, computer vision, deeplearning, pytorch, programming"><meta property="og:title" content="可解释性深度学习：Class Activation Map (CAM)" />
+<meta property="og:description" content="本文主要介绍可解释性深度学习方向的一个重要工作：Class Activation Map (CAM)。" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://imxtx.github.io/2021/10/cam/" /><meta property="og:image" content="https://imxtx.github.io/2021/10/cam/information_discovery.png"/><meta property="article:section" content="posts" />
+<meta property="article:published_time" content="2021-10-01T00:00:00+00:00" />
+<meta property="article:modified_time" content="2021-10-01T00:00:00+00:00" /><meta property="og:site_name" content="Tianxin&#39;s Blog" />
+<meta name="twitter:card" content="summary_large_image"/>
+<meta name="twitter:image" content="https://imxtx.github.io/2021/10/cam/information_discovery.png"/>
+<meta name="twitter:title" content="可解释性深度学习：Class Activation Map (CAM)"/>
+<meta name="twitter:description" content="本文主要介绍可解释性深度学习方向的一个重要工作：Class Activation Map (CAM)。"/>
+<meta name="application-name" content="Tianxin&#39;s Blog">
+<meta name="apple-mobile-web-app-title" content="Tianxin&#39;s Blog">
+
+<meta name="theme-color" content="#f8f8f8"><meta name="msapplication-TileColor" content="#da532c"><link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
+        <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+        <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><link rel="canonical" href="https://imxtx.github.io/2021/10/cam/" /><link rel="prev" href="https://imxtx.github.io/2021/08/unet/" /><link rel="next" href="https://imxtx.github.io/2022/03/fgsm/" /><link rel="stylesheet" href="/lib/normalize/normalize.min.css"><link rel="stylesheet" href="/css/color.css"><link rel="stylesheet" href="/css/style.min.css"><link rel="preload" as="style" onload="this.onload=null;this.rel='stylesheet'" href="/lib/fontawesome-free/all.min.css">
+        <noscript><link rel="stylesheet" href="/lib/fontawesome-free/all.min.css"></noscript><link rel="preload" as="style" onload="this.onload=null;this.rel='stylesheet'" href="/lib/animate/animate.min.css">
+        <noscript><link rel="stylesheet" href="/lib/animate/animate.min.css"></noscript><script type="application/ld+json">
+    {
+        "@context": "http://schema.org",
+        "@type": "BlogPosting",
+        "headline": "可解释性深度学习：Class Activation Map (CAM)",
+        "inLanguage": "en",
+        "mainEntityOfPage": {
+            "@type": "WebPage",
+            "@id": "https:\/\/imxtx.github.io\/2021\/10\/cam\/"
+        },"genre": "posts","keywords": "cam, explainable","wordcount":  1784 ,
+        "url": "https:\/\/imxtx.github.io\/2021\/10\/cam\/","datePublished": "2021-10-01T00:00:00+00:00","dateModified": "2021-10-01T00:00:00+00:00","publisher": {
+            "@type": "Organization",
+            "name": ""},"author": {
+                "@type": "Person",
+                "name": "tianxin"
+            },"description": ""
+    }
+    </script><script src="//instant.page/5.1.1" defer type="module" integrity="sha384-MWfCL6g1OTGsbSwfuMHc8+8J2u71/LA8dzlIN3ycajckxuZZmF+DNjdm7O6H3PSq"></script>
+</head>
+
+<body header-desktop="fixed" header-mobile="auto"><script type="text/javascript">
+        function setTheme(theme) {document.body.setAttribute('theme', theme); document.documentElement.style.setProperty('color-scheme', theme === 'light' ? 'light' : 'dark');}
+        function saveTheme(theme) {window.localStorage && localStorage.setItem('theme', theme);}
+        function getMeta(metaName) {const metas = document.getElementsByTagName('meta'); for (let i = 0; i < metas.length; i++) if (metas[i].getAttribute('name') === metaName) return metas[i]; return '';}
+        if (window.localStorage && localStorage.getItem('theme')) {let theme = localStorage.getItem('theme');theme === 'light' || theme === 'dark' || theme === 'black' ? setTheme(theme) : (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? setTheme('dark') : setTheme('light')); } else { if ('auto' === 'light' || 'auto' === 'dark' || 'auto' === 'black') setTheme('auto'), saveTheme('auto'); else saveTheme('auto'), window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? setTheme('dark') : setTheme('light');}
+        let metaColors = {'light': '#f8f8f8','dark': '#252627','black': '#000000'}
+        getMeta('theme-color').content = metaColors[document.body.getAttribute('theme')];
+    </script>
+    <div id="back-to-top"></div>
+    <div id="mask"></div><div class="wrapper"><header class="desktop" id="header-desktop">
+    <div class="header-wrapper">
+        <div class="header-title">
+            <a href="/" title="Tianxin&#39;s Blog">Tianxin&#39;s Blog</a>
+        </div>
+        <div class="menu">
+            <div class="menu-inner"><a class="menu-item" href="/posts/"> Posts </a><a class="menu-item" href="/tags/"> Tags </a><a class="menu-item" href="/categories/"> Categories </a><a class="menu-item" href="/about/"> About </a><span class="menu-item delimiter"></span><span class="menu-item search" id="search-desktop">
+                        <input type="text" placeholder="Search titles or contents..." id="search-input-desktop">
+                        <a href="#" class="search-button search-toggle" id="search-toggle-desktop" title="Search">
+                            <i class="fas fa-search fa-fw"></i>
+                        </a>
+                        <a href="#" class="search-button search-clear" id="search-clear-desktop" title="Clear">
+                            <i class="fas fa-times-circle fa-fw"></i>
+                        </a>
+                        <span class="search-button search-loading" id="search-loading-desktop">
+                            <i class="fas fa-spinner fa-fw fa-spin"></i>
+                        </span>
+                    </span><a href="#" class="menu-item theme-switch" title="Switch Theme">
+                    <i class="fas fa-adjust fa-fw"></i>
+                </a></div>
+        </div>
+    </div>
+</header><header class="mobile" id="header-mobile">
+    <div class="header-container">
+        <div class="header-wrapper">
+            <div class="header-title">
+                <a href="/" title="Tianxin&#39;s Blog">Tianxin&#39;s Blog</a>
+            </div>
+            <div class="menu-toggle" id="menu-toggle-mobile">
+                <span></span><span></span><span></span>
+            </div>
+        </div>
+        <div class="menu" id="menu-mobile"><div class="search-wrapper">
+                    <div class="search mobile" id="search-mobile">
+                        <input type="text" placeholder="Search titles or contents..." id="search-input-mobile">
+                        <a href="#" class="search-button search-toggle" id="search-toggle-mobile" title="Search">
+                            <i class="fas fa-search fa-fw"></i>
+                        </a>
+                        <a href="#" class="search-button search-clear" id="search-clear-mobile" title="Clear">
+                            <i class="fas fa-times-circle fa-fw"></i>
+                        </a>
+                        <span class="search-button search-loading" id="search-loading-mobile">
+                            <i class="fas fa-spinner fa-fw fa-spin"></i>
+                        </span>
+                    </div>
+                    <a href="#" class="search-cancel" id="search-cancel-mobile">
+                        Cancel
+                    </a>
+                </div><a class="menu-item" href="/posts/" title="">Posts</a><a class="menu-item" href="/tags/" title="">Tags</a><a class="menu-item" href="/categories/" title="">Categories</a><a class="menu-item" href="/about/" title="">About</a><a href="#" class="menu-item theme-switch" title="Switch Theme">
+                <i class="fas fa-adjust fa-fw"></i>
+            </a></div>
+    </div>
+</header>
+<div class="search-dropdown desktop">
+    <div id="search-dropdown-desktop"></div>
+</div>
+<div class="search-dropdown mobile">
+    <div id="search-dropdown-mobile"></div>
+</div>
+<main class="main">
+            <div class="container"><div class="toc" id="toc-auto">
+        <h2 class="toc-title">Contents</h2>
+        <div class="toc-content" id="toc-content-auto"><nav id="TableOfContents">
+  <ul>
+    <li><a href="#简介">简介</a></li>
+    <li><a href="#cam-的生成过程">CAM 的生成过程</a></li>
+    <li><a href="#实验结果">实验结果</a>
+      <ul>
+        <li><a href="#实验设置">实验设置</a></li>
+        <li><a href="#分类">分类</a></li>
+        <li><a href="#目标定位">目标定位</a></li>
+        <li><a href="#通用性">通用性</a></li>
+        <li><a href="#知识发现">知识发现</a></li>
+      </ul>
+    </li>
+    <li><a href="#代码">代码</a></li>
+    <li><a href="#总结">总结</a></li>
+  </ul>
+</nav></div>
+    </div><script>document.getElementsByTagName("main")[0].setAttribute("pageStyle", "normal")</script><script>document.getElementsByTagName("main")[0].setAttribute("autoTOC", "true")</script><article class="page single"><h1 class="single-title animate__animated animate__flipInX">可解释性深度学习：Class Activation Map (CAM)</h1><div class="post-meta">
+            <div class="post-meta-line">
+                <span class="post-author"><i class="author fas fa-user-circle fa-fw"></i><a href="/about" title="Author" rel=" author" class="author">tianxin</a>
+                </span>&nbsp;<span class="post-category">included in </span>&nbsp;<span class="post-category">category <a href="/categories/explainable-ai/"><i class="far fa-folder fa-fw"></i>Explainable AI</a></span></div>
+            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2021-10-01">Posted on 2021-10-01</time>&nbsp;
+                <i class="fas fa-pencil-alt fa-fw"></i>&nbsp;1784 words&nbsp;
+                <i class="far fa-clock fa-fw"></i>&nbsp;4 minutes&nbsp;</div>
+        </div><div class="details toc" id="toc-static"  kept="">
+                <div class="details-summary toc-title">
+                    <span>Contents</span>
+                    <span><i class="details-icon fas fa-angle-right"></i></span>
+                </div>
+                <div class="details-content toc-content" id="toc-content-static"><nav id="TableOfContents">
+  <ul>
+    <li><a href="#简介">简介</a></li>
+    <li><a href="#cam-的生成过程">CAM 的生成过程</a></li>
+    <li><a href="#实验结果">实验结果</a>
+      <ul>
+        <li><a href="#实验设置">实验设置</a></li>
+        <li><a href="#分类">分类</a></li>
+        <li><a href="#目标定位">目标定位</a></li>
+        <li><a href="#通用性">通用性</a></li>
+        <li><a href="#知识发现">知识发现</a></li>
+      </ul>
+    </li>
+    <li><a href="#代码">代码</a></li>
+    <li><a href="#总结">总结</a></li>
+  </ul>
+</nav></div>
+            </div><div class="content" id="content"><p>本文主要介绍可解释性深度学习方向的一个重要工作：Class Activation Map (CAM)。</p>
+<h2 id="简介" class="headerLink">
+    <a href="#%e7%ae%80%e4%bb%8b" class="header-mark"></a>简介</h2><p>Class Activation Map (CAM)，即<strong>类激活映射图</strong>是在论文 <a href="https://arxiv.org/abs/1512.04150" target="_blank" rel="noopener noreferrer">Learning Deep Features for Discriminative Localization</a> 中提出来的。CAM 图可以帮助我们可视化输入图像中模型感兴趣的区域，对于深度学习的可解释性研究有非常大的帮助。图 1 所示的是一个动作分类任务的 CAM 图，可以看到类别刷牙对应了手和嘴巴部分，类别砍树对应了电锯和人头部分</p>
+<figure><img src="cam_example.png"
+         alt="图1：动作分类任务的 CAM 图例子" width="700"/><figcaption>
+            <p>图1：动作分类任务的 CAM 图例子</p>
+        </figcaption>
+</figure>
+
+<h2 id="cam-的生成过程" class="headerLink">
+    <a href="#cam-%e7%9a%84%e7%94%9f%e6%88%90%e8%bf%87%e7%a8%8b" class="header-mark"></a>CAM 的生成过程</h2><p>给定一张图像，使用 $f_k(x,y)$ 表示最后一个卷积层输出的特征图中第 $k$ 个通道中空间位置位于 $(x,y)$ 处的激活值，那么在通道 $k$ 上进行 Global Average Pooling (GAP) 之后的结果为 $F^k = \sum_{x,y} f_k(x,y)$（这里的 GAP 应该还要除以特征图的长宽之积，论文作者没有写明）。因此，给定一个类别 $c$，softmax 的输入 $S_c = \sum_k w_k^c F_k$，其中 $w_k^c$ 表示特征图 $k$ 的对于类别 $c$ 的权重（重要性）。最后 softmax 关于类别 $c$ 的输出概率为 $P_c = \frac{\exp(S_c)}{\sum_c \exp(S_c)}$。</p>
+<figure><img src="cam_computation.png"
+         alt="图2：CAM 图的计算示意图"/><figcaption>
+            <p>图2：CAM 图的计算示意图</p>
+        </figcaption>
+</figure>
+
+<p>如图 2 中所示，最后一层卷积中每个通道的特征图（使用不同颜色标出）经过 GAP 后得到对应的激活值 $F^k$，对于类别 Australian terrier (澳大利亚梗)，softmax 的输入就是按权重（$W_1, W_2, &hellip;, W_n$）把这些 GAP 之后得到的激活值做一个 weighted sum。</p>
+<p>把 $F^k = \sum_{x,y} f_k(x,y)$ 放到 $S_c = \sum_k w_k^c F_k$ 中可得</p>
+<p>$$
+S_c = \sum_k w_k^c \sum_{x,y} f_k(x,y) = \sum_{x,y} \sum_k w_k^c f_k(x,y) \tag{1}
+$$</p>
+<p>定义 $M_c$ 为类别 $c$ 的类激活映射，那么对于特征图上空间中的每个点有</p>
+<p>$$
+M_c(x,y) = \sum_k w_k^c f_k(x,y) \tag{2}
+$$</p>
+<p>因此，$S_c = \sum_{x,y} M_c(x,y)$，$M_c(x,y)$ 则直接表示了 CAM 图中位于 $(x,y)$ 处的激活值对于类别 $c$ 的重要性。从图 1 下半部分可以看到，CAM 图就是不同通道的特征图按照学习到的权重加权求和得到的，最后再 resize 到和输入图像相同的大小，叠加起来就得到了输入图像上的类激活图。图 3 是作者在 <a href="https://www.image-net.org/challenges/LSVRC/index.php" target="_blank" rel="noopener noreferrer">ILSVRC</a> 数据集上可视化的效果：</p>
+<figure><img src="cams_on_ILSVRC.png"
+         alt="图3：ILSVRC 数据集上的一些 CAM 图示例" width="700"/><figcaption>
+            <p>图3：ILSVRC 数据集上的一些 CAM 图示例</p>
+        </figcaption>
+</figure>
+
+<p>从图 4 可以看出，同一张图像中，不同类别对应的 CAM 图也是不同的。例如宫殿（palace）和穹顶（dome）明显对应图像中不同的区域。</p>
+<figure><img src="cams_on_different_parts.png"
+         alt="图4：同一张图像中不同物体的 CAM 图" width="700"/><figcaption>
+            <p>图4：同一张图像中不同物体的 CAM 图</p>
+        </figcaption>
+</figure>
+
+<h2 id="实验结果" class="headerLink">
+    <a href="#%e5%ae%9e%e9%aa%8c%e7%bb%93%e6%9e%9c" class="header-mark"></a>实验结果</h2><h3 id="实验设置" class="headerLink">
+    <a href="#%e5%ae%9e%e9%aa%8c%e8%ae%be%e7%bd%ae" class="header-mark"></a>实验设置</h3><p>作者使用了三个模型进行实验，分别是 AlexNet、VGG 和 GoogLeNet，作者将每个网络的最后一个 FC 替换为 GAP，之后跟着一个全连接的 softmax 层，其他具体的实验设置可以看原论文。</p>
+<h3 id="分类" class="headerLink">
+    <a href="#%e5%88%86%e7%b1%bb" class="header-mark"></a>分类</h3><p>如下表所示，作者比较了修改后的网络和原始网络的分类性能，发现修改后的网络并没有性能上的下降。</p>
+<figure><img src="table1.png" width="700"/>
+</figure>
+
+<p>此外，作者还对 GAP 和 Global Max Pooling (GMP) 进行了比较，作者认为 GAP 能够考虑特征图中所有位置的信息，而 GMP 只会考虑特征图中值最大的一个点，因此使用 GAP 能够在 CAM 图中更好地定位物体位置。从表 1 中可以看出 GMP 其实也没有降点很多。</p>
+<h3 id="目标定位" class="headerLink">
+    <a href="#%e7%9b%ae%e6%a0%87%e5%ae%9a%e4%bd%8d" class="header-mark"></a>目标定位</h3><p>作者还进行了目标定位的实验，并通过 CAM 图绘制出了 bounding box。具体绘制方法是，首先把激活图中所有的大于激活图中最大值 20% 的元素分割出来，然后计算这些元素组成的一个最大的连通图，bounding box 则是包含最大连通图的方框。下表是目标定位的性能对比，可以看到使用 CAM 定位的性能还是不错的：</p>
+<figure><img src="table2.png" width="700"/>
+</figure>
+
+<p>下表是和有监督的方法对比，CAM 和有监督的性能比较接近了：</p>
+<figure><img src="table3.png" width="700"/>
+</figure>
+
+<p>下图是目标定位的例子，绿色是 ground truth，红色是 CAM 图得到的 bounding box，可以看出大体上的位置还是正确的：</p>
+<figure><img src="localizaiton_example.png"
+         alt="图5：使用 CAM 生成 bounding box，第一行对应 GoogLeNet，第二行对应 AlexNet" width="700"/><figcaption>
+            <p>图5：使用 CAM 生成 bounding box，第一行对应 GoogLeNet，第二行对应 AlexNet</p>
+        </figcaption>
+</figure>
+
+<p>此外，作者发现使用 CAM 图生成的 bounding box 能够提升分类任务的性能。如下表所示，第一行是使用全图进行分类，第二行是先用 CAM 图生成 bounding box，然后再在使用 bounding box 裁剪后的图像上进行分类，结果接近第三行带有 bounding box 标注的性能：</p>
+<figure><img src="table4.png" width="700"/>
+</figure>
+
+<h3 id="通用性" class="headerLink">
+    <a href="#%e9%80%9a%e7%94%a8%e6%80%a7" class="header-mark"></a>通用性</h3><p>如图 6 所示，作者使用训练好的 GoogLeNet 在其他数据集上提取 CAM 图，发现 CAM 图能够很好的对应分类标签，说明 CAM 图的生成具有较强的泛化性。</p>
+<figure><img src="cam_other_datasets.png"
+         alt="图6：CAM 在其他分类数据集上的效果"/><figcaption>
+            <p>图6：CAM 在其他分类数据集上的效果</p>
+        </figcaption>
+</figure>
+
+<h3 id="知识发现" class="headerLink">
+    <a href="#%e7%9f%a5%e8%af%86%e5%8f%91%e7%8e%b0" class="header-mark"></a>知识发现</h3><p>如下图所示，通过 CAM 图还可以发现和某个场景最相关的物体：</p>
+<figure><img src="information_discovery.png"
+         alt="图7：左）CAM 图中和餐厅最相关的有桌子、椅子、盘子等。右）CAM 图中和浴室最相关的物体有洗手池、水龙头等"/><figcaption>
+            <p>图7：左）CAM 图中和餐厅最相关的有桌子、椅子、盘子等。右）CAM 图中和浴室最相关的物体有洗手池、水龙头等</p>
+        </figcaption>
+</figure>
+
+<p>此外作者还做了使用 CAM 图检测文字、视觉问答等实验，都发现 CAM 图能够很好显示出预测结果最关注的图像部分。</p>
+<h2 id="代码" class="headerLink">
+    <a href="#%e4%bb%a3%e7%a0%81" class="header-mark"></a>代码</h2><ul>
+<li>论文源码：<a href="https://github.com/zhoubolei/CAM" target="_blank" rel="noopener noreferrer">https://github.com/zhoubolei/CAM</a></li>
+<li>一个不错的 CAM 库：<a href="https://github.com/frgfm/torch-cam" target="_blank" rel="noopener noreferrer">https://github.com/frgfm/torch-cam</a></li>
+</ul>
+<h2 id="总结" class="headerLink">
+    <a href="#%e6%80%bb%e7%bb%93" class="header-mark"></a>总结</h2><p>CAM 是可解释性深度学习方向上非常重要的一个工作，能够帮助我们可视化模型的关注点，同时也为我们的深度模型提供了一个非常有用的 Debug 工具。</p></div>
+
+        <div class="post-footer" id="post-footer">
+    <div class="post-info">
+        <div class="post-info-line">
+            <div class="post-info-mod">
+                <span>Updated on 2021-10-01</span>
+            </div>
+            <div class="post-info-license"></div>
+            <div class="post-info-share">
+                <span><a href="#" title="Share on Twitter" data-sharer="twitter" data-url="https://imxtx.github.io/2021/10/cam/" data-title="可解释性深度学习：Class Activation Map (CAM)" data-via="@imxietx" data-hashtags="cam,explainable"><i class="fab fa-twitter fa-fw"></i></a><a href="#" title="Share on Facebook" data-sharer="facebook" data-url="https://imxtx.github.io/2021/10/cam/" data-hashtag="cam"><i class="fab fa-facebook-square fa-fw"></i></a><a href="#" title="Share on Reddit" data-sharer="reddit" data-url="https://imxtx.github.io/2021/10/cam/"><i class="fab fa-reddit fa-fw"></i></a><a href="#" title="Share on 微博" data-sharer="weibo" data-url="https://imxtx.github.io/2021/10/cam/" data-title="可解释性深度学习：Class Activation Map (CAM)"><i class="fab fa-weibo fa-fw"></i></a></span>
+            </div>
+        </div>
+        <div class="post-info-line">
+            <div class="post-info-md"></div>
+            
+        </div>
+    </div>
+
+    <div class="post-info-more">
+        <section class="post-tags"><i class="fas fa-tags fa-fw"></i>&nbsp;<a href="/tags/cam/">cam</a>,&nbsp;<a href="/tags/explainable/">explainable</a></section>
+        <section>
+            <span><a href="javascript:void(0);" onclick="window.history.back();">Back</a></span>&nbsp;|&nbsp;<span><a href="/">Home</a></span>
+        </section>
+    </div>
+
+    <div class="post-nav"><a href="/2021/08/unet/" class="prev" rel="prev" title="U-Net 源码解读"><i class="fas fa-angle-left fa-fw"></i>U-Net 源码解读</a>
+            <a href="/2022/03/fgsm/" class="next" rel="next" title="对抗攻击系列：FGSM">对抗攻击系列：FGSM<i class="fas fa-angle-right fa-fw"></i></a></div>
+</div>
+</article></div>
+        </main><footer class="footer">
+        <div class="footer-container"><div class="footer-line">
+                    Powered by <a href="https://gohugo.io/" target="_blank" rel="noopener noreferrer" title="Hugo 0.111.3">Hugo</a>&nbsp;|&nbsp;Theme - <a href="https://github.com/HEIGE-PCloud/DoIt" target="_blank" rel="noopener noreferrer" title="DoIt 0.3.0"><i class="far fa-edit fa-fw"></i> DoIt</a>
+                </div><div class="footer-line"><i class="far fa-copyright fa-fw"></i><span itemprop="copyrightYear">2023</span><span class="author" itemprop="copyrightHolder">&nbsp;<a href="/about" target="_blank" rel="noopener noreferrer">tianxin</a></span>&nbsp;|&nbsp;<span class="license"><a rel="license external nofollow noopener noreffer" href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank">CC BY-NC 4.0</a></span></div>
+            <div class="footer-line"></div>
+            <div class="footer-line">
+            </div>
+        </div></footer></div>
+
+    <div id="fixed-buttons"><a href="#back-to-top" id="back-to-top-button" class="fixed-button" title="Back to Top">
+            <i class="fas fa-arrow-up fa-fw"></i>
+        </a><a href="#" id="view-comments" class="fixed-button" title="View Comments">
+            <i class="fas fa-comment fa-fw"></i>
+        </a>
+    </div><div id="cookieconsent-container"></div><div class="assets"><link rel="stylesheet" href="/lib/katex/katex.min.css"><link rel="preload" as="style" onload="this.onload=null;this.rel='stylesheet'" href="/lib/katex/copy-tex.min.css">
+        <noscript><link rel="stylesheet" href="/lib/katex/copy-tex.min.css"></noscript><link rel="stylesheet" href="/lib/cookieconsent/cookieconsent.min.css"><script type="text/javascript">window.config={"code":{"copyTitle":"Copy to clipboard","maxShownLines":50},"comment":{},"cookieconsent":{"content":{"dismiss":"Got it!","link":"Learn more","message":"This website uses Cookies to improve your experience."},"enable":true,"palette":{"button":{"background":"#f0f0f0"},"popup":{"background":"#1aa3ff"}},"theme":"edgeless"},"math":{"delimiters":[{"display":true,"left":"$$","right":"$$"},{"display":true,"left":"\\[","right":"\\]"},{"display":false,"left":"$","right":"$"},{"display":false,"left":"\\(","right":"\\)"}],"strict":false},"search":{"distance":null,"findAllMatches":null,"fuseIndexURL":"/index.json","highlightTag":"em","ignoreFieldNorm":null,"ignoreLocation":null,"isCaseSensitive":null,"location":null,"maxResultLength":10,"minMatchCharLength":null,"noResultsFound":"No results found","snippetLength":50,"threshold":null,"type":"fuse","useExtendedSearch":null},"sharerjs":true};</script><script type="text/javascript" src="/lib/clipboard/clipboard.min.js"></script><script type="text/javascript" src="/lib/sharer/sharer.min.js"></script><script type="text/javascript" src="/lib/katex/katex.min.js" defer></script><script type="text/javascript" src="/lib/katex/auto-render.min.js" defer></script><script type="text/javascript" src="/lib/katex/copy-tex.min.js" defer></script><script type="text/javascript" src="/lib/katex/mhchem.min.js" defer></script><script type="text/javascript" src="/js/katex.min.js" defer></script><script type="text/javascript" src="/lib/cookieconsent/cookieconsent.min.js" defer></script><script type="text/javascript" src="/js/cookieconsent.min.js" defer></script><script type="text/javascript" src="/js/theme.min.js" defer></script></div>
+</body>
+
+</html>
