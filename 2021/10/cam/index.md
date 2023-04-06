@@ -30,7 +30,7 @@ $$
 M\_c(x,y) = \sum\_k w\_k^c f\_k(x,y) \tag{2}
 $$
 
-因此，$S\_c = \sum\_{x,y} M\_c(x,y)$，$M\_c(x,y)$ 则直接表示了 CAM 图中位于 $(x,y)$ 处的激活值对于类别 $c$ 的重要性。从图 1 下半部分可以看到，CAM 图就是不同通道的特征图按照学习到的权重加权求和得到的，最后再 resize 到和输入图像相同的大小，叠加起来就得到了输入图像上的类激活图。图 3 是作者在 [ILSVRC](https://www.image-net.org/challenges/LSVRC/index.php) 数据集上可视化的效果：
+因此，$S\_c = \sum\_{x,y} M\_c(x,y)$，$M\_c(x,y)$ 则直接表示了 CAM 图中位于 $(x,y)$ 处的激活值对于类别 $c$ 的重要性。从图 2 下半部分可以看到，CAM 图就是不同通道的特征图按照学习到的权重加权求和得到的，最后再 resize 到和输入图像相同的大小，叠加起来就得到了输入图像上的类激活图。图 3 是作者在 [ILSVRC](https://www.image-net.org/challenges/LSVRC/index.php) 数据集上可视化的效果：
 
 {{< figure src="cams_on_ILSVRC.png" caption="图3：ILSVRC 数据集上的一些 CAM 图示例" width="700" >}}
 
