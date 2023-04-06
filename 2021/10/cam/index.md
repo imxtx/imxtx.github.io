@@ -89,6 +89,249 @@ $$
 - 论文源码：<https://github.com/zhoubolei/CAM>
 - 一个不错的 CAM 库：<https://github.com/frgfm/torch-cam>
 
+我们用下面这张自行车的图像来试验一下 CAM 图的生成：
+
+{{< figure src="bicycle.jpg" >}}
+
+这里简单说明一下一些关键的代码，下面是一些基本的导入、设置和加载预训练模型：
+
+```python
+import io
+from PIL import Image
+from torchvision import models, transforms
+import torch.nn.functional as F
+import numpy as np
+import cv2
+import json
+
+# 标签和测试图像
+labels_file = 'imagenet-simple-labels.json'
+image_file = 'data/bicycle.jpg'
+# 加载预训练模型
+net = models.resnet18(weights=models.ResNet18_Weights.IMAGENET1K_V1)
+net.eval()
+# ResNet18 最后一个 block 的名字
+finalconv_name = 'layer4'
+```
+
+模型结构如下：
+
+```text
+ResNet(
+  (conv1): Conv2d(3, 64, kernel_size=(7, 7), stride=(2, 2), padding=(3, 3), bias=False)
+  (bn1): BatchNorm2d(64, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+  (relu): ReLU(inplace=True)
+  (maxpool): MaxPool2d(kernel_size=3, stride=2, padding=1, dilation=1, ceil_mode=False)
+  (layer1): Sequential(
+    (0): BasicBlock(
+      (conv1): Conv2d(64, 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), bias=False)
+      (bn1): BatchNorm2d(64, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+      (relu): ReLU(inplace=True)
+      (conv2): Conv2d(64, 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), bias=False)
+      (bn2): BatchNorm2d(64, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+    )
+    (1): BasicBlock(
+      (conv1): Conv2d(64, 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), bias=False)
+      (bn1): BatchNorm2d(64, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+      (relu): ReLU(inplace=True)
+      (conv2): Conv2d(64, 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), bias=False)
+      (bn2): BatchNorm2d(64, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+    )
+  )
+  (layer2): Sequential(
+    (0): BasicBlock(
+      (conv1): Conv2d(64, 128, kernel_size=(3, 3), stride=(2, 2), padding=(1, 1), bias=False)
+      (bn1): BatchNorm2d(128, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+      (relu): ReLU(inplace=True)
+      (conv2): Conv2d(128, 128, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), bias=False)
+      (bn2): BatchNorm2d(128, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+      (downsample): Sequential(
+        (0): Conv2d(64, 128, kernel_size=(1, 1), stride=(2, 2), bias=False)
+        (1): BatchNorm2d(128, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+      )
+    )
+    (1): BasicBlock(
+      (conv1): Conv2d(128, 128, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), bias=False)
+      (bn1): BatchNorm2d(128, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+      (relu): ReLU(inplace=True)
+      (conv2): Conv2d(128, 128, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), bias=False)
+      (bn2): BatchNorm2d(128, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+    )
+  )
+  (layer3): Sequential(
+    (0): BasicBlock(
+      (conv1): Conv2d(128, 256, kernel_size=(3, 3), stride=(2, 2), padding=(1, 1), bias=False)
+      (bn1): BatchNorm2d(256, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+      (relu): ReLU(inplace=True)
+      (conv2): Conv2d(256, 256, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), bias=False)
+      (bn2): BatchNorm2d(256, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+      (downsample): Sequential(
+        (0): Conv2d(128, 256, kernel_size=(1, 1), stride=(2, 2), bias=False)
+        (1): BatchNorm2d(256, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+      )
+    )
+    (1): BasicBlock(
+      (conv1): Conv2d(256, 256, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), bias=False)
+      (bn1): BatchNorm2d(256, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+      (relu): ReLU(inplace=True)
+      (conv2): Conv2d(256, 256, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), bias=False)
+      (bn2): BatchNorm2d(256, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+    )
+  )
+  (layer4): Sequential(
+    (0): BasicBlock(
+      (conv1): Conv2d(256, 512, kernel_size=(3, 3), stride=(2, 2), padding=(1, 1), bias=False)
+      (bn1): BatchNorm2d(512, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+      (relu): ReLU(inplace=True)
+      (conv2): Conv2d(512, 512, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), bias=False)
+      (bn2): BatchNorm2d(512, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+      (downsample): Sequential(
+        (0): Conv2d(256, 512, kernel_size=(1, 1), stride=(2, 2), bias=False)
+        (1): BatchNorm2d(512, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+      )
+    )
+    (1): BasicBlock(
+      (conv1): Conv2d(512, 512, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), bias=False)
+      (bn1): BatchNorm2d(512, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+      (relu): ReLU(inplace=True)
+      (conv2): Conv2d(512, 512, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), bias=False)
+      (bn2): BatchNorm2d(512, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+    )
+  )
+  (avgpool): AdaptiveAvgPool2d(output_size=(1, 1))
+  (fc): Linear(in_features=512, out_features=1000, bias=True)
+)
+```
+
+接着我们需要为最后一个 block 注册一个钩子函数：
+
+```python
+# 保存 forward 过程中通过钩子函数记录的特征
+features_blobs = []
+
+def hook_feature(module, input, output):
+    features_blobs.append(output.data.cpu().numpy())
+
+# 注册钩子函数
+net._modules.get(finalconv_name).register_forward_hook(hook_feature)
+```
+
+下面的代码可以查看网络中每个模块的参数名，按构建的先后顺序排序：
+
+```python
+for name, param in net.named_parameters():
+    print(name)
+```
+
+输出：
+
+```text
+conv1.weight
+bn1.weight
+bn1.bias
+layer1.0.conv1.weight
+...
+layer4.1.conv1.weight
+layer4.1.bn1.weight
+layer4.1.bn1.bias
+layer4.1.conv2.weight
+layer4.1.bn2.weight
+layer4.1.bn2.bias
+fc.weight
+fc.bias
+```
+
+获得 softmax 之前的 fc 层的权重：
+
+```python
+# 获得 softmax 的权重，从上面网络结构看出最后一个 Linear 的 bias 为 True，所以倒数第二个
+# 参数才是全连接的权重 fc.weight
+params = list(net.parameters())
+weight_softmax = np.squeeze(params[-2].data.numpy())
+```
+
+下面是计算 CAM 图的函数：
+
+```python
+def returnCAM(feature_conv, weight_softmax, class_idx):
+    # 生成 CAM 图并 resize 到 256x256
+    size_upsample = (256, 256)
+    bz, nc, h, w = feature_conv.shape
+    output_cam = []
+    # class_idx 是一个列表，对每个传进来的类别都计算一个 CAM 图
+    for idx in class_idx:
+        # [1,512]x[1,H*W] 这里即是图 2 中加权求和的过程
+        cam = weight_softmax[idx].dot(feature_conv.reshape((nc, h*w)))
+        cam = cam.reshape(h, w)
+        cam = cam - np.min(cam)
+        cam_img = cam / np.max(cam)
+        cam_img = np.uint8(255 * cam_img)
+        output_cam.append(cv2.resize(cam_img, size_upsample))
+    return output_cam
+```
+
+下面是加载图像、标签以及一些预处理：
+
+```python
+normalize = transforms.Normalize(
+   mean=[0.485, 0.456, 0.406],
+   std=[0.229, 0.224, 0.225]
+)
+preprocess = transforms.Compose([
+   transforms.Resize((224,224)),
+   transforms.ToTensor(),
+   normalize
+])
+
+# 加载测试图像
+img_pil = Image.open(image_file)
+img_tensor = preprocess(img_pil)
+logit = net(img_tensor.unsqueeze(0))
+
+# 加载标签列表
+with open(LABELS_file) as f:
+    classes = json.load(f)
+```
+
+下面是使用测试图像生成 CAM 图的代码：
+
+```python
+h_x = F.softmax(logit, dim=1).data.squeeze()
+probs, idx = h_x.sort(0, descending=True)
+probs = probs.numpy()
+idx = idx.numpy()
+
+# 输出预测结果
+for i in range(0, 5):
+    print('{:.3f} -> {}'.format(probs[i], classes[idx[i]]))
+print('output CAM.jpg for the top1 prediction: {}'.format(classes[idx[0]]))
+
+# 给最概率最大的预测类别生成 CAM 图
+CAMs = returnCAM(features_blobs[0], weight_softmax, [idx[0]])
+
+# 把 CAM 图加到原图上并保存
+img = cv2.imread(image_file)
+height, width, _ = img.shape
+heatmap = cv2.applyColorMap(cv2.resize(CAMs[0],(width, height)), cv2.COLORMAP_JET)
+result = heatmap * 0.3 + img * 0.7
+cv2.imwrite('CAM.jpg', result)
+```
+
+`cv2.applyColorMap` 函数可以把灰度图转成有颜色的图，非常方便，可以参考[文档](https://docs.opencv.org/3.4/d3/d50/group__imgproc__colormap.html)。最终输出：
+
+```text
+0.932 -> mountain bike
+0.043 -> unicycle
+0.011 -> moped
+0.006 -> tandem bicycle
+0.004 -> tricycle
+output CAM.jpg for the top1 prediction: mountain bike
+```
+
+最终的 CAM 图像：
+
+{{< figure src="bicycle_cam.jpg" >}}
+
 ## 总结
 
 CAM 是可解释性深度学习方向上非常重要的一个工作，能够帮助我们可视化模型的关注点，同时也为我们的深度模型提供了一个非常有用的 Debug 工具。

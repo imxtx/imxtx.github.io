@@ -31,7 +31,7 @@
         "mainEntityOfPage": {
             "@type": "WebPage",
             "@id": "https:\/\/imxtx.github.io\/2021\/10\/cam\/"
-        },"genre": "posts","keywords": "cam, explainable","wordcount":  1784 ,
+        },"genre": "posts","keywords": "cam, explainable","wordcount":  3019 ,
         "url": "https:\/\/imxtx.github.io\/2021\/10\/cam\/","datePublished": "2021-10-01T00:00:00+00:00","dateModified": "2021-10-01T00:00:00+00:00","publisher": {
             "@type": "Organization",
             "name": ""},"author": {
@@ -135,8 +135,8 @@
                 <span class="post-author"><i class="author fas fa-user-circle fa-fw"></i><a href="/about" title="Author" rel=" author" class="author">tianxin</a>
                 </span>&nbsp;<span class="post-category">included in </span>&nbsp;<span class="post-category">category <a href="/categories/explainable-ai/"><i class="far fa-folder fa-fw"></i>Explainable AI</a></span></div>
             <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw"></i>&nbsp;<time datetime="2021-10-01">Posted on 2021-10-01</time>&nbsp;
-                <i class="fas fa-pencil-alt fa-fw"></i>&nbsp;1784 words&nbsp;
-                <i class="far fa-clock fa-fw"></i>&nbsp;4 minutes&nbsp;</div>
+                <i class="fas fa-pencil-alt fa-fw"></i>&nbsp;3019 words&nbsp;
+                <i class="far fa-clock fa-fw"></i>&nbsp;7 minutes&nbsp;</div>
         </div><div class="details toc" id="toc-static"  kept="">
                 <div class="details-summary toc-title">
                     <span>Contents</span>
@@ -250,6 +250,454 @@ $$</p>
 <li>论文源码：<a href="https://github.com/zhoubolei/CAM" target="_blank" rel="noopener noreferrer">https://github.com/zhoubolei/CAM</a></li>
 <li>一个不错的 CAM 库：<a href="https://github.com/frgfm/torch-cam" target="_blank" rel="noopener noreferrer">https://github.com/frgfm/torch-cam</a></li>
 </ul>
+<p>我们用下面这张自行车的图像来试验一下 CAM 图的生成：</p>
+<figure><img src="bicycle.jpg"/>
+</figure>
+
+<p>这里简单说明一下一些关键的代码，下面是一些基本的导入、设置和加载预训练模型：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">io</span>
+</span></span><span class="line"><span class="cl"><span class="kn">from</span> <span class="nn">PIL</span> <span class="kn">import</span> <span class="n">Image</span>
+</span></span><span class="line"><span class="cl"><span class="kn">from</span> <span class="nn">torchvision</span> <span class="kn">import</span> <span class="n">models</span><span class="p">,</span> <span class="n">transforms</span>
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">torch.nn.functional</span> <span class="k">as</span> <span class="nn">F</span>
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">cv2</span>
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">json</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># 标签和测试图像</span>
+</span></span><span class="line"><span class="cl"><span class="n">labels_file</span> <span class="o">=</span> <span class="s1">&#39;imagenet-simple-labels.json&#39;</span>
+</span></span><span class="line"><span class="cl"><span class="n">image_file</span> <span class="o">=</span> <span class="s1">&#39;data/bicycle.jpg&#39;</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># 加载预训练模型</span>
+</span></span><span class="line"><span class="cl"><span class="n">net</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">resnet18</span><span class="p">(</span><span class="n">weights</span><span class="o">=</span><span class="n">models</span><span class="o">.</span><span class="n">ResNet18_Weights</span><span class="o">.</span><span class="n">IMAGENET1K_V1</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">net</span><span class="o">.</span><span class="n">eval</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># ResNet18 最后一个 block 的名字</span>
+</span></span><span class="line"><span class="cl"><span class="n">finalconv_name</span> <span class="o">=</span> <span class="s1">&#39;layer4&#39;</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>模型结构如下：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span><span class="lnt">42
+</span><span class="lnt">43
+</span><span class="lnt">44
+</span><span class="lnt">45
+</span><span class="lnt">46
+</span><span class="lnt">47
+</span><span class="lnt">48
+</span><span class="lnt">49
+</span><span class="lnt">50
+</span><span class="lnt">51
+</span><span class="lnt">52
+</span><span class="lnt">53
+</span><span class="lnt">54
+</span><span class="lnt">55
+</span><span class="lnt">56
+</span><span class="lnt">57
+</span><span class="lnt">58
+</span><span class="lnt">59
+</span><span class="lnt">60
+</span><span class="lnt">61
+</span><span class="lnt">62
+</span><span class="lnt">63
+</span><span class="lnt">64
+</span><span class="lnt">65
+</span><span class="lnt">66
+</span><span class="lnt">67
+</span><span class="lnt">68
+</span><span class="lnt">69
+</span><span class="lnt">70
+</span><span class="lnt">71
+</span><span class="lnt">72
+</span><span class="lnt">73
+</span><span class="lnt">74
+</span><span class="lnt">75
+</span><span class="lnt">76
+</span><span class="lnt">77
+</span><span class="lnt">78
+</span><span class="lnt">79
+</span><span class="lnt">80
+</span><span class="lnt">81
+</span><span class="lnt">82
+</span><span class="lnt">83
+</span><span class="lnt">84
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-text" data-lang="text"><span class="line"><span class="cl">ResNet(
+</span></span><span class="line"><span class="cl">  (conv1): Conv2d(3, 64, kernel_size=(7, 7), stride=(2, 2), padding=(3, 3), bias=False)
+</span></span><span class="line"><span class="cl">  (bn1): BatchNorm2d(64, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+</span></span><span class="line"><span class="cl">  (relu): ReLU(inplace=True)
+</span></span><span class="line"><span class="cl">  (maxpool): MaxPool2d(kernel_size=3, stride=2, padding=1, dilation=1, ceil_mode=False)
+</span></span><span class="line"><span class="cl">  (layer1): Sequential(
+</span></span><span class="line"><span class="cl">    (0): BasicBlock(
+</span></span><span class="line"><span class="cl">      (conv1): Conv2d(64, 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), bias=False)
+</span></span><span class="line"><span class="cl">      (bn1): BatchNorm2d(64, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+</span></span><span class="line"><span class="cl">      (relu): ReLU(inplace=True)
+</span></span><span class="line"><span class="cl">      (conv2): Conv2d(64, 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), bias=False)
+</span></span><span class="line"><span class="cl">      (bn2): BatchNorm2d(64, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+</span></span><span class="line"><span class="cl">    )
+</span></span><span class="line"><span class="cl">    (1): BasicBlock(
+</span></span><span class="line"><span class="cl">      (conv1): Conv2d(64, 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), bias=False)
+</span></span><span class="line"><span class="cl">      (bn1): BatchNorm2d(64, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+</span></span><span class="line"><span class="cl">      (relu): ReLU(inplace=True)
+</span></span><span class="line"><span class="cl">      (conv2): Conv2d(64, 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), bias=False)
+</span></span><span class="line"><span class="cl">      (bn2): BatchNorm2d(64, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+</span></span><span class="line"><span class="cl">    )
+</span></span><span class="line"><span class="cl">  )
+</span></span><span class="line"><span class="cl">  (layer2): Sequential(
+</span></span><span class="line"><span class="cl">    (0): BasicBlock(
+</span></span><span class="line"><span class="cl">      (conv1): Conv2d(64, 128, kernel_size=(3, 3), stride=(2, 2), padding=(1, 1), bias=False)
+</span></span><span class="line"><span class="cl">      (bn1): BatchNorm2d(128, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+</span></span><span class="line"><span class="cl">      (relu): ReLU(inplace=True)
+</span></span><span class="line"><span class="cl">      (conv2): Conv2d(128, 128, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), bias=False)
+</span></span><span class="line"><span class="cl">      (bn2): BatchNorm2d(128, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+</span></span><span class="line"><span class="cl">      (downsample): Sequential(
+</span></span><span class="line"><span class="cl">        (0): Conv2d(64, 128, kernel_size=(1, 1), stride=(2, 2), bias=False)
+</span></span><span class="line"><span class="cl">        (1): BatchNorm2d(128, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+</span></span><span class="line"><span class="cl">      )
+</span></span><span class="line"><span class="cl">    )
+</span></span><span class="line"><span class="cl">    (1): BasicBlock(
+</span></span><span class="line"><span class="cl">      (conv1): Conv2d(128, 128, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), bias=False)
+</span></span><span class="line"><span class="cl">      (bn1): BatchNorm2d(128, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+</span></span><span class="line"><span class="cl">      (relu): ReLU(inplace=True)
+</span></span><span class="line"><span class="cl">      (conv2): Conv2d(128, 128, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), bias=False)
+</span></span><span class="line"><span class="cl">      (bn2): BatchNorm2d(128, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+</span></span><span class="line"><span class="cl">    )
+</span></span><span class="line"><span class="cl">  )
+</span></span><span class="line"><span class="cl">  (layer3): Sequential(
+</span></span><span class="line"><span class="cl">    (0): BasicBlock(
+</span></span><span class="line"><span class="cl">      (conv1): Conv2d(128, 256, kernel_size=(3, 3), stride=(2, 2), padding=(1, 1), bias=False)
+</span></span><span class="line"><span class="cl">      (bn1): BatchNorm2d(256, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+</span></span><span class="line"><span class="cl">      (relu): ReLU(inplace=True)
+</span></span><span class="line"><span class="cl">      (conv2): Conv2d(256, 256, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), bias=False)
+</span></span><span class="line"><span class="cl">      (bn2): BatchNorm2d(256, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+</span></span><span class="line"><span class="cl">      (downsample): Sequential(
+</span></span><span class="line"><span class="cl">        (0): Conv2d(128, 256, kernel_size=(1, 1), stride=(2, 2), bias=False)
+</span></span><span class="line"><span class="cl">        (1): BatchNorm2d(256, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+</span></span><span class="line"><span class="cl">      )
+</span></span><span class="line"><span class="cl">    )
+</span></span><span class="line"><span class="cl">    (1): BasicBlock(
+</span></span><span class="line"><span class="cl">      (conv1): Conv2d(256, 256, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), bias=False)
+</span></span><span class="line"><span class="cl">      (bn1): BatchNorm2d(256, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+</span></span><span class="line"><span class="cl">      (relu): ReLU(inplace=True)
+</span></span><span class="line"><span class="cl">      (conv2): Conv2d(256, 256, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), bias=False)
+</span></span><span class="line"><span class="cl">      (bn2): BatchNorm2d(256, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+</span></span><span class="line"><span class="cl">    )
+</span></span><span class="line"><span class="cl">  )
+</span></span><span class="line"><span class="cl">  (layer4): Sequential(
+</span></span><span class="line"><span class="cl">    (0): BasicBlock(
+</span></span><span class="line"><span class="cl">      (conv1): Conv2d(256, 512, kernel_size=(3, 3), stride=(2, 2), padding=(1, 1), bias=False)
+</span></span><span class="line"><span class="cl">      (bn1): BatchNorm2d(512, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+</span></span><span class="line"><span class="cl">      (relu): ReLU(inplace=True)
+</span></span><span class="line"><span class="cl">      (conv2): Conv2d(512, 512, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), bias=False)
+</span></span><span class="line"><span class="cl">      (bn2): BatchNorm2d(512, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+</span></span><span class="line"><span class="cl">      (downsample): Sequential(
+</span></span><span class="line"><span class="cl">        (0): Conv2d(256, 512, kernel_size=(1, 1), stride=(2, 2), bias=False)
+</span></span><span class="line"><span class="cl">        (1): BatchNorm2d(512, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+</span></span><span class="line"><span class="cl">      )
+</span></span><span class="line"><span class="cl">    )
+</span></span><span class="line"><span class="cl">    (1): BasicBlock(
+</span></span><span class="line"><span class="cl">      (conv1): Conv2d(512, 512, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), bias=False)
+</span></span><span class="line"><span class="cl">      (bn1): BatchNorm2d(512, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+</span></span><span class="line"><span class="cl">      (relu): ReLU(inplace=True)
+</span></span><span class="line"><span class="cl">      (conv2): Conv2d(512, 512, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), bias=False)
+</span></span><span class="line"><span class="cl">      (bn2): BatchNorm2d(512, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+</span></span><span class="line"><span class="cl">    )
+</span></span><span class="line"><span class="cl">  )
+</span></span><span class="line"><span class="cl">  (avgpool): AdaptiveAvgPool2d(output_size=(1, 1))
+</span></span><span class="line"><span class="cl">  (fc): Linear(in_features=512, out_features=1000, bias=True)
+</span></span><span class="line"><span class="cl">)
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>接着我们需要为最后一个 block 注册一个钩子函数：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="c1"># 保存 forward 过程中通过钩子函数记录的特征</span>
+</span></span><span class="line"><span class="cl"><span class="n">features_blobs</span> <span class="o">=</span> <span class="p">[]</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">def</span> <span class="nf">hook_feature</span><span class="p">(</span><span class="n">module</span><span class="p">,</span> <span class="nb">input</span><span class="p">,</span> <span class="n">output</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">    <span class="n">features_blobs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">output</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">())</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># 注册钩子函数</span>
+</span></span><span class="line"><span class="cl"><span class="n">net</span><span class="o">.</span><span class="n">_modules</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">finalconv_name</span><span class="p">)</span><span class="o">.</span><span class="n">register_forward_hook</span><span class="p">(</span><span class="n">hook_feature</span><span class="p">)</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>下面的代码可以查看网络中每个模块的参数名，按构建的先后顺序排序：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">param</span> <span class="ow">in</span> <span class="n">net</span><span class="o">.</span><span class="n">named_parameters</span><span class="p">():</span>
+</span></span><span class="line"><span class="cl">    <span class="nb">print</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>输出：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-text" data-lang="text"><span class="line"><span class="cl">conv1.weight
+</span></span><span class="line"><span class="cl">bn1.weight
+</span></span><span class="line"><span class="cl">bn1.bias
+</span></span><span class="line"><span class="cl">layer1.0.conv1.weight
+</span></span><span class="line"><span class="cl">...
+</span></span><span class="line"><span class="cl">layer4.1.conv1.weight
+</span></span><span class="line"><span class="cl">layer4.1.bn1.weight
+</span></span><span class="line"><span class="cl">layer4.1.bn1.bias
+</span></span><span class="line"><span class="cl">layer4.1.conv2.weight
+</span></span><span class="line"><span class="cl">layer4.1.bn2.weight
+</span></span><span class="line"><span class="cl">layer4.1.bn2.bias
+</span></span><span class="line"><span class="cl">fc.weight
+</span></span><span class="line"><span class="cl">fc.bias
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>获得 softmax 之前的 fc 层的权重：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="c1"># 获得 softmax 的权重，从上面网络结构看出最后一个 Linear 的 bias 为 True，所以倒数第二个</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># 参数才是全连接的权重 fc.weight</span>
+</span></span><span class="line"><span class="cl"><span class="n">params</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">net</span><span class="o">.</span><span class="n">parameters</span><span class="p">())</span>
+</span></span><span class="line"><span class="cl"><span class="n">weight_softmax</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">squeeze</span><span class="p">(</span><span class="n">params</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">numpy</span><span class="p">())</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>下面是计算 CAM 图的函数：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="k">def</span> <span class="nf">returnCAM</span><span class="p">(</span><span class="n">feature_conv</span><span class="p">,</span> <span class="n">weight_softmax</span><span class="p">,</span> <span class="n">class_idx</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">    <span class="c1"># 生成 CAM 图并 resize 到 256x256</span>
+</span></span><span class="line"><span class="cl">    <span class="n">size_upsample</span> <span class="o">=</span> <span class="p">(</span><span class="mi">256</span><span class="p">,</span> <span class="mi">256</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="n">bz</span><span class="p">,</span> <span class="n">nc</span><span class="p">,</span> <span class="n">h</span><span class="p">,</span> <span class="n">w</span> <span class="o">=</span> <span class="n">feature_conv</span><span class="o">.</span><span class="n">shape</span>
+</span></span><span class="line"><span class="cl">    <span class="n">output_cam</span> <span class="o">=</span> <span class="p">[]</span>
+</span></span><span class="line"><span class="cl">    <span class="c1"># class_idx 是一个列表，对每个传进来的类别都计算一个 CAM 图</span>
+</span></span><span class="line"><span class="cl">    <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="n">class_idx</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">        <span class="c1"># [1,512]x[1,H*W] 这里即是图 2 中加权求和的过程</span>
+</span></span><span class="line"><span class="cl">        <span class="n">cam</span> <span class="o">=</span> <span class="n">weight_softmax</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">feature_conv</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="n">nc</span><span class="p">,</span> <span class="n">h</span><span class="o">*</span><span class="n">w</span><span class="p">)))</span>
+</span></span><span class="line"><span class="cl">        <span class="n">cam</span> <span class="o">=</span> <span class="n">cam</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">h</span><span class="p">,</span> <span class="n">w</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="n">cam</span> <span class="o">=</span> <span class="n">cam</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">cam</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="n">cam_img</span> <span class="o">=</span> <span class="n">cam</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">cam</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="n">cam_img</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">uint8</span><span class="p">(</span><span class="mi">255</span> <span class="o">*</span> <span class="n">cam_img</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="n">output_cam</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">cv2</span><span class="o">.</span><span class="n">resize</span><span class="p">(</span><span class="n">cam_img</span><span class="p">,</span> <span class="n">size_upsample</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="n">output_cam</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>下面是加载图像、标签以及一些预处理：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="n">normalize</span> <span class="o">=</span> <span class="n">transforms</span><span class="o">.</span><span class="n">Normalize</span><span class="p">(</span>
+</span></span><span class="line"><span class="cl">   <span class="n">mean</span><span class="o">=</span><span class="p">[</span><span class="mf">0.485</span><span class="p">,</span> <span class="mf">0.456</span><span class="p">,</span> <span class="mf">0.406</span><span class="p">],</span>
+</span></span><span class="line"><span class="cl">   <span class="n">std</span><span class="o">=</span><span class="p">[</span><span class="mf">0.229</span><span class="p">,</span> <span class="mf">0.224</span><span class="p">,</span> <span class="mf">0.225</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl"><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">preprocess</span> <span class="o">=</span> <span class="n">transforms</span><span class="o">.</span><span class="n">Compose</span><span class="p">([</span>
+</span></span><span class="line"><span class="cl">   <span class="n">transforms</span><span class="o">.</span><span class="n">Resize</span><span class="p">((</span><span class="mi">224</span><span class="p">,</span><span class="mi">224</span><span class="p">)),</span>
+</span></span><span class="line"><span class="cl">   <span class="n">transforms</span><span class="o">.</span><span class="n">ToTensor</span><span class="p">(),</span>
+</span></span><span class="line"><span class="cl">   <span class="n">normalize</span>
+</span></span><span class="line"><span class="cl"><span class="p">])</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># 加载测试图像</span>
+</span></span><span class="line"><span class="cl"><span class="n">img_pil</span> <span class="o">=</span> <span class="n">Image</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">image_file</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">img_tensor</span> <span class="o">=</span> <span class="n">preprocess</span><span class="p">(</span><span class="n">img_pil</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">logit</span> <span class="o">=</span> <span class="n">net</span><span class="p">(</span><span class="n">img_tensor</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="mi">0</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># 加载标签列表</span>
+</span></span><span class="line"><span class="cl"><span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">LABELS_file</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">    <span class="n">classes</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>下面是使用测试图像生成 CAM 图的代码：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="n">h_x</span> <span class="o">=</span> <span class="n">F</span><span class="o">.</span><span class="n">softmax</span><span class="p">(</span><span class="n">logit</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">squeeze</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl"><span class="n">probs</span><span class="p">,</span> <span class="n">idx</span> <span class="o">=</span> <span class="n">h_x</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">descending</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">probs</span> <span class="o">=</span> <span class="n">probs</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl"><span class="n">idx</span> <span class="o">=</span> <span class="n">idx</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># 输出预测结果</span>
+</span></span><span class="line"><span class="cl"><span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">5</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{:.3f}</span><span class="s1"> -&gt; </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">probs</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">classes</span><span class="p">[</span><span class="n">idx</span><span class="p">[</span><span class="n">i</span><span class="p">]]))</span>
+</span></span><span class="line"><span class="cl"><span class="nb">print</span><span class="p">(</span><span class="s1">&#39;output CAM.jpg for the top1 prediction: </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">classes</span><span class="p">[</span><span class="n">idx</span><span class="p">[</span><span class="mi">0</span><span class="p">]]))</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># 给最概率最大的预测类别生成 CAM 图</span>
+</span></span><span class="line"><span class="cl"><span class="n">CAMs</span> <span class="o">=</span> <span class="n">returnCAM</span><span class="p">(</span><span class="n">features_blobs</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">weight_softmax</span><span class="p">,</span> <span class="p">[</span><span class="n">idx</span><span class="p">[</span><span class="mi">0</span><span class="p">]])</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># 把 CAM 图加到原图上并保存</span>
+</span></span><span class="line"><span class="cl"><span class="n">img</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">imread</span><span class="p">(</span><span class="n">image_file</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">height</span><span class="p">,</span> <span class="n">width</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">img</span><span class="o">.</span><span class="n">shape</span>
+</span></span><span class="line"><span class="cl"><span class="n">heatmap</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">applyColorMap</span><span class="p">(</span><span class="n">cv2</span><span class="o">.</span><span class="n">resize</span><span class="p">(</span><span class="n">CAMs</span><span class="p">[</span><span class="mi">0</span><span class="p">],(</span><span class="n">width</span><span class="p">,</span> <span class="n">height</span><span class="p">)),</span> <span class="n">cv2</span><span class="o">.</span><span class="n">COLORMAP_JET</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="n">result</span> <span class="o">=</span> <span class="n">heatmap</span> <span class="o">*</span> <span class="mf">0.3</span> <span class="o">+</span> <span class="n">img</span> <span class="o">*</span> <span class="mf">0.7</span>
+</span></span><span class="line"><span class="cl"><span class="n">cv2</span><span class="o">.</span><span class="n">imwrite</span><span class="p">(</span><span class="s1">&#39;CAM.jpg&#39;</span><span class="p">,</span> <span class="n">result</span><span class="p">)</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p><code>cv2.applyColorMap</code> 函数可以把灰度图转成有颜色的图，非常方便，可以参考<a href="https://docs.opencv.org/3.4/d3/d50/group__imgproc__colormap.html" target="_blank" rel="noopener noreferrer">文档</a>。最终输出：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-text" data-lang="text"><span class="line"><span class="cl">0.932 -&gt; mountain bike
+</span></span><span class="line"><span class="cl">0.043 -&gt; unicycle
+</span></span><span class="line"><span class="cl">0.011 -&gt; moped
+</span></span><span class="line"><span class="cl">0.006 -&gt; tandem bicycle
+</span></span><span class="line"><span class="cl">0.004 -&gt; tricycle
+</span></span><span class="line"><span class="cl">output CAM.jpg for the top1 prediction: mountain bike
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>最终的 CAM 图像：</p>
+<figure><img src="bicycle_cam.jpg"/>
+</figure>
+
 <h2 id="总结" class="headerLink">
     <a href="#%e6%80%bb%e7%bb%93" class="header-mark"></a>总结</h2><p>CAM 是可解释性深度学习方向上非常重要的一个工作，能够帮助我们可视化模型的关注点，同时也为我们的深度模型提供了一个非常有用的 Debug 工具。</p></div>
 
