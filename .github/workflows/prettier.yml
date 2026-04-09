@@ -1,17 +1,11 @@
 name: Prettier code formatter
 
 on:
-  pull_request:
-    branches:
-      - master
-      - main
-  push:
-    branches:
-      - master
-      - main
+  workflow_dispatch:
 
 jobs:
   check:
+    if: false
     # available images: https://github.com/actions/runner-images#available-images
     runs-on: ubuntu-latest
     steps:

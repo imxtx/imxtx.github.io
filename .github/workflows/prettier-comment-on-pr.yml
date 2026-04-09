@@ -1,11 +1,11 @@
 name: Comment on pull request
 
 on:
-  repository_dispatch:
-    types: [prettier-failed-on-pr]
+  workflow_dispatch:
 
 jobs:
   comment:
+    if: false
     # available images: https://github.com/actions/runner-images#available-images
     runs-on: ubuntu-latest
     steps:

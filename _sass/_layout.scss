@@ -37,6 +37,11 @@ body.sticky-bottom-footer {
 .profile {
   img {
     width: 100%;
+    max-width: 180px;
+    height: auto;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
   }
 }
 
