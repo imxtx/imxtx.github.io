@@ -52,7 +52,7 @@ ninja.data = [{
           section: "News",},{id: "news-one-paper-accepted-by-iclr-2026",
           title: 'One paper accepted by ICLR 2026.',
           description: "",
-          section: "News",},{id: "news-we-have-released-a-t2av-benchmark-i-e-phyavbench-which-contains-11-605-newly-recorded-videos-the-dataset-will-be-soon-released-to-the-public",
+          section: "News",},{id: "news-we-have-released-a-t2av-benchmark-i-e-phyavbench-which-contains-11-605-newly-recorded-videos-the-dataset-will-be-soon-released-to-the-public-the-embeddings-of-audio-samples-and-evaluation-scripts-have-been-released-https-github-com-imxtx-phyavbench",
           title: 'We have released a T2AV benchmark, i.e., PhyAVBench, which contains 11,605 newly recorded...',
           description: "",
           section: "News",},{id: "projects-project-1",
