@@ -30,4 +30,4 @@ My research focuses on text-to-speech, speech LLMs, audio generation and reasoni
 
 Email: txie151[at]connect.hkust-gz.edu.cn / tianxin.xie[at]outlook.com
 
-[Google Scholar](https://scholar.google.com/citations?user=zr8gtMAAAAAJ&hl=en) | [ORCID](https://orcid.org/0009-0002-1949-0516) | [GitHub](https://github.com/imxtx)
+[Google Scholar](https://scholar.google.com/citations?user=zr8gtMAAAAAJ&hl=en) | [Semantic Scholar](https://www.semanticscholar.org/author/Tianxin-Xie/2334477082) | [ORCID](https://orcid.org/0009-0002-1949-0516) | [GitHub](https://github.com/imxtx)
