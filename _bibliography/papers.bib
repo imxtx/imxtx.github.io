@@ -1,6 +1,19 @@
 ---
 ---
 
+
+@inproceedings{xie2026phyavbench,
+  abbr     = {ACM MM 2026},
+  selected = {true},
+  title    = {PhyAVBench: A Challenging Audio Physics-Sensitivity Benchmark for Physically Grounded Text-to-Audio-Video Generation},
+  author   = {Tianxin Xie and Wentao Lei and Kai Jiang and Guanjie Huang and Pengfei Zhang and Chunhui Zhang and Fengji Ma and Haoyu He and Han Zhang and Jiangshan He and Jinting Wang and Linghan Fang and Lufei Gao and Orkesh Ablet and Peihua Zhang and Ruolin Hu and Shengyu Li and Weilin Lin and Xiaoyang Feng and Xinyue Yang and Yan Rong and Yanyun Wang and Zihang Shao and Zelin Zhao and Chenxing Li and Shan Yang and Wenfu Wang and Meng Yu and Dong Yu and Li Liu},
+  booktitle = {Proceedings of the 34th ACM International Conference on Multimedia},
+  year     = {2026},
+  website = {https://imxtx.github.io/PhyAVBench/},
+  pdf     = {https://arxiv.org/abs/2512.23994},
+  code = {https://github.com/imxtx/PhyAVBench},
+}
+
 @inproceedings{zhang2026agrepa,
   title    = {AG-REPA: Causal Layer Selection for Representation Alignment in Audio Flow Matching},
   author   = {Pengfei ZHANG and Tianxin Xie and Minghao Yang and Li Liu},
@@ -8,7 +21,6 @@
   year     = {2026},
   pdf      = {https://arxiv.org/pdf/2603.01006},
   abbr     = {ICML 2026},
-  bibtex_show = {true},
   selected = {false}
 }
 
@@ -17,74 +29,42 @@
   author   = {Pengfei ZHANG and Tianxin Xie and Minghao Yang and Li Liu},
   booktitle = {The Fourteenth International Conference on Learning Representations},
   year     = {2026},
-  url      = {https://openreview.net/forum?id=ZkoojtEm3W},
   pdf      = {https://openreview.net/forum?id=ZkoojtEm3W},
   code = {https://github.com/zpforlove/Resp-Agent},
   abbr     = {ICLR 2026},
-  bibtex_show = {true},
   selected = {false}
 }
 
 @article{fang2026boosting,
   abbr     = {AAAI 2026},
-  bibtex_show = {true},
   selected = {false},
   title    = {Boosting ASR Robustness via Test-Time Reinforcement Learning with Audio-Text Semantic Rewards},
   author   = {Fang, Linghan and Xie, Tianxin and Liu, Li},
   journal  = {Proceedings of the AAAI Conference on Artificial Intelligence},
-  volume   = {40},
-  number   = {36},
-  pages    = {30673--30681},
   year     = {2026},
-  month    = {March},
   doi      = {10.1609/aaai.v40i36.40323},
-  url      = {https://ojs.aaai.org/index.php/AAAI/article/view/40323},
   pdf      = {https://ojs.aaai.org/index.php/AAAI/article/view/40323},
-  abstract = {Recently, Automatic Speech Recognition (ASR) systems (e.g., Whisper) have achieved remarkable accuracy improvements but remain highly sensitive to real-world unseen data (data with large distribution shifts), including noisy environments and diverse accents. To address this issue, test-time adaptation (TTA) has shown great potential in improving the model adaptability at inference time without ground-truth labels, and existing TTA methods often rely on pseudo-labeling or entropy minimization. However, by treating model confidence as a learning signal, these methods may reinforce high-confidence errors, leading to confirmation bias that undermines adaptation. To overcome these limitations, we present ASR-TRA, a novel Test-time Reinforcement Adaptation framework inspired by causal intervention. More precisely, our method introduces a learnable decoder prompt and utilizes temperature-controlled stochastic decoding to generate diverse transcription candidates. These are scored by a reward model that measures audio-text semantic alignment, and the resulting feedback is used to update both model and prompt parameters via reinforcement learning. Comprehensive experiments on LibriSpeech with synthetic noise and L2 Arctic accented English datasets demonstrate that our method significantly outperforms existing state-of-the-art (SOTA), including SUTA and SGEM, in both accuracy and inference speed. Ablation studies further confirm the effectiveness of combining audio and language-based rewards, highlighting our method's enhanced stability and interpretability. Overall, our approach provides a practical and robust solution for deploying ASR systems in challenging real-world conditions.}
 }
 
-@article{xie2025phyavbench,
-  abbr     = {arXiv},
-  bibtex_show = {true},
-  selected = {true},
-  title    = {PhyAVBench: A Challenging Audio Physics-Sensitivity Benchmark for Physically Grounded Text-to-Audio-Video Generation},
-  author   = {Tianxin Xie and Wentao Lei and Kai Jiang and Guanjie Huang and Pengfei Zhang and Chunhui Zhang and Fengji Ma and Haoyu He and Han Zhang and Jiangshan He and Jinting Wang and Linghan Fang and Lufei Gao and Orkesh Ablet and Peihua Zhang and Ruolin Hu and Shengyu Li and Weilin Lin and Xiaoyang Feng and Xinyue Yang and Yan Rong and Yanyun Wang and Zihang Shao and Zelin Zhao and Chenxing Li and Shan Yang and Wenfu Wang and Meng Yu and Dong Yu and Li Liu},
-  journal  = {arXiv preprint arXiv:2512.23994},
-  year     = {2025},
-  pdf     = {https://arxiv.org/abs/2512.23994},
-  code = {https://github.com/imxtx/PhyAVBench}
-}
 
 @inproceedings{xie-etal-2025-towards,
   abbr = {EMNLP 2025},
   selected = {true},
-  bibtex_show = {true},
   title = "Towards Controllable Speech Synthesis in the Era of Large Language Models: A Systematic Survey",
   author = "Xie, Tianxin  and
     Rong, Yan  and
     Zhang, Pengfei  and
     Wang, Wenwu  and
     Liu, Li",
-  editor = "Christodoulopoulos, Christos  and
-    Chakraborty, Tanmoy  and
-    Rose, Carolyn  and
-    Peng, Violet",
   booktitle = "Proceedings of the 2025 Conference on Empirical Methods in Natural Language Processing",
   year = "2025",
-  address = "Suzhou, China",
-  publisher = "Association for Computational Linguistics",
-  url = "https://aclanthology.org/2025.emnlp-main.40/",
   doi = "10.18653/v1/2025.emnlp-main.40",
-  pages = "764--791",
-  ISBN = "979-8-89176-332-6",
-  abstract = "Text-to-speech (TTS) has advanced from generating natural-sounding speech to enabling fine-grained control over attributes like emotion, timbre, and style. Driven by rising industrial demand and breakthroughs in deep learning, e.g., diffusion and large language models (LLMs), controllable TTS has become a rapidly growing research area. This survey provides **the first** comprehensive review of controllable TTS methods, from traditional control techniques to emerging approaches using natural language prompts. We categorize model architectures, control strategies, and feature representations, while also summarizing challenges, datasets, and evaluations in controllable TTS. This survey aims to guide researchers and practitioners by offering a clear taxonomy and highlighting future directions in this fast-evolving field. One can visit https://github.com/imxtx/awesome-controllabe-speech-synthesis for a comprehensive paper list and updates.",
   pdf     = {https://aclanthology.org/2025.emnlp-main.40/},
-  code     = {https://github.com/imxtx/awesome-controllable-speech-synthesis}
+  code     = {https://github.com/imxtx/awesome-controllable-speech-synthesis},
 }
 
 @article{xie2025emosteer,
   abbr     = {arXiv},
-  bibtex_show = {true},
   title={EmoSteer-TTS: Fine-Grained and Training-Free Emotion-Controllable Text-to-Speech via Activation Steering},
   author={Xie, Tianxin and Yang, Shan and Li, Chenxing and Yu, Dong and Liu, Li},
   journal={arXiv preprint arXiv:2508.03543},
@@ -95,33 +75,23 @@
 
 @inproceedings{xie2025icasspcued,
   abbr     = {ICASSP 2025},
-  bibtex_show = {true},
   selected = {true},
   title    = {Inter- and Intra-Sentence Cuer-Invariant Representation Learning for Generalizable Cued Speech Recognition},
   author   = {Xie, Tianxin and Liu, Li},
   booktitle = {ICASSP 2025 - 2025 IEEE International Conference on Acoustics, Speech and Signal Processing (ICASSP)},
   year     = {2025},
-  pages    = {1--5},
-  keywords = {Hands; Representation learning; Degradation; Visualization; Lips; Speech recognition; Contrastive learning; Feature extraction; Synchronization; Speech processing; Cued Speech Recognition; Multi-modal Learning; Cuer Generalization; Contrastive Learning},
   doi      = {10.1109/ICASSP49660.2025.10888246},
   pdf      = {https://ieeexplore.ieee.org/document/10888246},
-  url      = {https://ieeexplore.ieee.org/document/10888246}
 }
 
 @article{xie2025tpami,
   abbr     = {TPAMI},
-  bibtex_show = {true},
   selected = {true},
   author={Xie, Tianxin and Han, Hu and Shan, Shiguang and Chen, Xilin},
   journal={IEEE Transactions on Pattern Analysis and Machine Intelligence}, 
   title={Natural Adversarial Mask for Face Identity Protection in Physical World}, 
   year={2025},
-  volume={47},
-  number={3},
-  pages={2089-2106},
-  keywords={Face recognition;Faces;Protection;Closed box;Privacy;Glass box;Perturbation methods;Three-dimensional printing;Target recognition;Face masks;Deep learning;adversarial example;face identity protection;physical world;natural face mask},
   doi={10.1109/TPAMI.2024.3522994},
   code     = {https://github.com/imxtx/NatMask},
   pdf      = {https://ieeexplore.ieee.org/document/10816466},
-  url      = {https://ieeexplore.ieee.org/document/10816466}
 }
