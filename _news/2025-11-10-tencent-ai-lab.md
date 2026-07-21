@@ -6,4 +6,4 @@ inline: true
 related_posts: false
 ---
 
-I have started my internship at Tencent AI Lab.
+I started my internship at Tencent AI Lab.

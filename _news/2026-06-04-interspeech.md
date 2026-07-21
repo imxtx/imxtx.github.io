@@ -6,4 +6,4 @@ inline: true
 related_posts: false
 ---
 
-Three papers accepted by Interspeech 2026.
+Three papers accepted at Interspeech 2026.
