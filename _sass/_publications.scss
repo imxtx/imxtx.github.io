@@ -72,6 +72,14 @@
 
       .title {
         font-weight: bolder;
+
+        .ccf-badge {
+          margin-left: 0.35rem;
+          background-color: #b91c1c;
+          color: #fff;
+          vertical-align: middle;
+          white-space: nowrap;
+        }
       }
 
       .author {

@@ -1013,6 +1013,9 @@ To add a thumbnail to a publication, include a `preview` field in your BibTeX en
 
 Place the image file in `assets/img/publication_preview/`.
 
+To display a red **CCF-A** badge after a publication title, add `ccf={A},` to its entry in `_bibliography/papers.bib`.
+Omit the `ccf` field to hide the badge. The badge appears only when the value is `A`.
+
 ## Adding a Google Calendar
 
 You can embed a Google Calendar on any page by using the `calendar.liquid` include.

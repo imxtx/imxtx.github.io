@@ -66,6 +66,13 @@ layout: default
       {% include selected_papers.liquid %}
     {% endif %}
 
+    {% if page.services %}
+      <section class="services">
+        <h2>Services</h2>
+        {{ page.services | markdownify }}
+      </section>
+    {% endif %}
+
     <!-- Social -->
     {% if page.social %}
       <div class="social">
