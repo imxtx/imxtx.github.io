@@ -50,6 +50,9 @@
     <!-- Title -->
     <div class="title">
       {{ entry.title }}
+      {% if entry.award_name %}
+        <span class="badge badge-warning ml-1 align-middle"><span aria-hidden="true">🏆</span> {{ entry.award_name | escape }}</span>
+      {% endif %}
       {% if entry.ccf == 'A' %}
         <span class="badge ccf-badge">CCF-A</span>
       {% endif %}
