@@ -40,7 +40,7 @@ latest_posts:
   limit: 3 # leave blank to include all the blog posts
 ---
 
-I am a PhD student at the AI Thrust, Information Hub, Hong Kong University of Science and Technology (Guangzhou), advised by Prof. [Li Liu](https://liliu-avril.github.io/). I received my B.E. degree in Computer Science from Hunan Normal University, and my M.S. degree in Computer Science from the University of Chinese Academy of Sciences, advised by Prof. [Hu Han](https://sites.google.com/site/huhanhomepage/). I also had the privilege of working closely with Prof. [Shiguang Shan](https://scholar.google.com.hk/citations?user=Vkzd7MIAAAAJ&hl=en) and Prof. [Xilin Chen](https://scholar.google.com.hk/citations?user=vVx2v20AAAAJ&hl=en).
+I am a PhD student at the AI Thrust, Information Hub, Hong Kong University of Science and Technology (Guangzhou), advised by Prof. [Li Liu](https://liliu-avril.github.io/) and co-supervised by Prof. [Yutao Yue](https://yutaoyue.github.io). I received my B.E. degree in Computer Science from Hunan Normal University, and my M.S. degree in Computer Science from the University of Chinese Academy of Sciences, advised by Prof. [Hu Han](https://sites.google.com/site/huhanhomepage/). I also had the privilege of working closely with Prof. [Shiguang Shan](https://scholar.google.com.hk/citations?user=Vkzd7MIAAAAJ&hl=en) and Prof. [Xilin Chen](https://scholar.google.com.hk/citations?user=vVx2v20AAAAJ&hl=en).
 
 My research focuses on text-to-speech, speech LLMs, full-duplex models, audio generation and reasoning, and interactive AI.
 
